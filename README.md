@@ -74,6 +74,9 @@ node script/record-deployments.mjs testnet
 forge verify-contract <address> <Contract> --verifier blockscout --verifier-url "$BOT_TESTNET_EXPLORER_URL/api/" --watch
 ```
 
+In PowerShell, load the SDK values with `node script/sdk-env.mjs --powershell | Invoke-Expression`
+and set `$env:UZO_NETWORK = "testnet"` instead of the prefix.
+
 The script uses the standard CREATE2 deployer, so factory addresses are fixed by the bytecode.
 Running it again reuses factories that already exist. It reverts if the chain ID is wrong or the
 tip jar factory's USDT does not match the SDK.
