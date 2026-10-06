@@ -1,0 +1,3 @@
+# LF everywhere. Solidity metadata hashes the source text, so CRLF would change bytecode
+# and break verification against deployed contracts.
+* text=auto eol=lf

@@ -27,3 +27,6 @@ lcov.info
 # phase 0 spike build output
 phase0/spike/out/
 phase0/spike/cache/
+
+# forge script simulations
+contracts/broadcast/**/dry-run/

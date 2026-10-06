@@ -1,0 +1,13 @@
+{
+  "name": "@uzolabs/deploy-contracts",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "sdk-env": "node script/sdk-env.mjs"
+  },
+  "dependencies": {
+    "@uzolabs/sdk": "^0.2.0",
+    "viem": "^2.57.3"
+  }
+}
