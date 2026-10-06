@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "description": "Uzo factory addresses and deploy blocks per chain ID. Written by contracts/script/record-deployments.mjs after a deploy. Chain data such as USDT comes from @uzolabs/sdk, not from here.",
+  "chains": {
+    "968": {
+      "network": "testnet",
+      "factories": {}
+    },
+    "677": {
+      "network": "mainnet",
+      "factories": {}
+    }
+  }
+}

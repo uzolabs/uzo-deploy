@@ -1,0 +1,5 @@
+{
+  "schema": 1,
+  "description": "Wallets controlled by the Uzo Labs team. Anything they deploy or tip is shown separately from user activity and never counted in public stats.",
+  "addresses": []
+}
