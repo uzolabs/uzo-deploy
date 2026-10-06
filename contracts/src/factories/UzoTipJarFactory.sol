@@ -30,6 +30,8 @@ contract UzoTipJarFactory {
 
     /// @notice Creates the factory.
     /// @param usdt_ USDT on this chain. Must be a deployed contract.
+    // The code-length check below also rejects the zero address.
+    // forge-lint: disable-next-line(missing-zero-check)
     constructor(address usdt_) {
         if (usdt_.code.length == 0) revert InvalidUsdt();
         usdt = usdt_;
@@ -44,8 +46,9 @@ contract UzoTipJarFactory {
         external
         returns (address instance)
     {
-        instance =
-            address(new UzoTipJar{salt: _salt(msg.sender, userSalt)}(recipient, usdt, title));
+        instance = address(new UzoTipJar{salt: _salt(msg.sender, userSalt)}(recipient, usdt, title));
+        // The only external call is our own template constructor, so the order is safe.
+        // forge-lint: disable-next-line(reentrancy-events)
         emit Deployed(msg.sender, instance, UZO_TIP_JAR_ID, UZO_TIP_JAR_VERSION);
     }
 
@@ -61,8 +64,10 @@ contract UzoTipJarFactory {
         address recipient,
         string calldata title
     ) external view returns (address) {
-        bytes memory initCode =
-            abi.encodePacked(type(UzoTipJar).creationCode, abi.encode(recipient, usdt, title));
+        bytes memory args = abi.encode(recipient, usdt, title);
+        // creationCode is a fixed constant, so the packed encoding cannot collide.
+        // forge-lint: disable-next-line(encode-packed-collision)
+        bytes memory initCode = abi.encodePacked(type(UzoTipJar).creationCode, args);
         return Create2.computeAddress(_salt(deployer, userSalt), keccak256(initCode));
     }
 

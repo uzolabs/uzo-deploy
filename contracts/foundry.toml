@@ -18,6 +18,8 @@ fs_permissions = [{ access = "read-write", path = "../config" }]
 
 [fuzz]
 runs = 10000
+# Fixed seed so gas snapshots are reproducible. Change it now and then to explore new inputs.
+seed = "0x5a0"
 
 [invariant]
 runs = 256

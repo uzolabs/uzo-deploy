@@ -38,6 +38,8 @@ contract UzoTokenFactory {
         instance = address(
             new UzoToken{salt: _salt(msg.sender, userSalt)}(name, symbol, initialSupply, recipient)
         );
+        // The only external call is our own template constructor, so the order is safe.
+        // forge-lint: disable-next-line(reentrancy-events)
         emit Deployed(msg.sender, instance, UZO_TOKEN_ID, UZO_TOKEN_VERSION);
     }
 
@@ -57,9 +59,10 @@ contract UzoTokenFactory {
         uint256 initialSupply,
         address recipient
     ) external view returns (address) {
-        bytes memory initCode = abi.encodePacked(
-            type(UzoToken).creationCode, abi.encode(name, symbol, initialSupply, recipient)
-        );
+        bytes memory args = abi.encode(name, symbol, initialSupply, recipient);
+        // creationCode is a fixed constant, so the packed encoding cannot collide.
+        // forge-lint: disable-next-line(encode-packed-collision)
+        bytes memory initCode = abi.encodePacked(type(UzoToken).creationCode, args);
         return Create2.computeAddress(_salt(deployer, userSalt), keccak256(initCode));
     }
 

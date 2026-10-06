@@ -49,6 +49,8 @@ contract UzoNFTFactory {
                 p.name, p.symbol, p.baseURI, p.maxSupply, p.owner, p.royaltyReceiver, p.royaltyBps
             )
         );
+        // The only external call is our own template constructor, so the order is safe.
+        // forge-lint: disable-next-line(reentrancy-events)
         emit Deployed(msg.sender, instance, UZO_NFT_ID, UZO_NFT_VERSION);
     }
 
@@ -65,6 +67,8 @@ contract UzoNFTFactory {
         bytes memory args = abi.encode(
             p.name, p.symbol, p.baseURI, p.maxSupply, p.owner, p.royaltyReceiver, p.royaltyBps
         );
+        // creationCode is a fixed constant, so the packed encoding cannot collide.
+        // forge-lint: disable-next-line(encode-packed-collision)
         bytes32 initHash = keccak256(abi.encodePacked(type(UzoNFT).creationCode, args));
         return Create2.computeAddress(_salt(deployer, userSalt), initHash);
     }
