@@ -74,9 +74,32 @@ node script/record-deployments.mjs testnet
 forge verify-contract <address> <Contract> --verifier blockscout --verifier-url "$BOT_TESTNET_EXPLORER_URL/api/" --watch
 ```
 
+In PowerShell, load the SDK values with `node script/sdk-env.mjs --powershell | Invoke-Expression`
+and set `$env:UZO_NETWORK = "testnet"` instead of the prefix.
+
 The script uses the standard CREATE2 deployer, so factory addresses are fixed by the bytecode.
 Running it again reuses factories that already exist. It reverts if the chain ID is wrong or the
 tip jar factory's USDT does not match the SDK.
+
+Then deploy one instance of each template through the factories as a smoke test, and verify them
+through BOTScan's API the same way the app will:
+
+```bash
+UZO_NETWORK=testnet forge script script/DeploySmoke.s.sol --rpc-url bot_testnet --account uzo-deployer --broadcast
+node script/record-deployments.mjs testnet
+node script/verify-instance.mjs testnet --smoke
+```
+
+`record-deployments.mjs` adds every wallet that sent these transactions to
+`config/team-addresses.json`, so team deployments are always shown apart from real users.
+
+### Verify any instance yourself
+
+`node script/verify-instance.mjs testnet <address>` checks that the address was created by one of
+the factories in `config/deployments.json`, rebuilds the constructor arguments from the creation
+transaction, and submits `contracts/verify/<Template>.json` (the standard JSON input from this
+repo's build) to BOTScan. Regenerate those files with `node script/standard-json.mjs` after any
+contract change; CI fails if they are stale.
 
 ## Security
 

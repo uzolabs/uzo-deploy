@@ -1,5 +1,13 @@
 {
   "schema": 1,
   "description": "Wallets controlled by the Uzo Labs team. Anything they deploy or tip is shown separately from user activity and never counted in public stats.",
-  "addresses": []
+  "addresses": [
+    {
+      "address": "0xff08064bC2764216dE386CCdC4412f3727A8B246",
+      "label": "Factory deployer",
+      "chains": [
+        968
+      ]
+    }
+  ]
 }

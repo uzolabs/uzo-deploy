@@ -2,13 +2,67 @@
   "schema": 1,
   "description": "Uzo factory addresses and deploy blocks per chain ID. Written by contracts/script/record-deployments.mjs after a deploy. Chain data such as USDT comes from @uzolabs/sdk, not from here.",
   "chains": {
-    "968": {
-      "network": "testnet",
-      "factories": {}
-    },
     "677": {
       "network": "mainnet",
       "factories": {}
+    },
+    "968": {
+      "network": "testnet",
+      "factories": {
+        "token": {
+          "contract": "UzoTokenFactory",
+          "address": "0x37370F4504d0703c40c90E31bEB536CD1D772c7e",
+          "deployBlock": 25930594,
+          "txHash": "0x0421b5eec6d97c9653ad0ceee410d287ecb3757078c1ce7755bccc68e5e50e65",
+          "templateId": "uzo.token",
+          "version": 1
+        },
+        "nft": {
+          "contract": "UzoNFTFactory",
+          "address": "0xd41186A5c7414d4AA0E306bfD59d70CAc0ABCD78",
+          "deployBlock": 25930595,
+          "txHash": "0x0d59126ad5631a06771e9c97bb7e09b14023d1227e370251e34dc4945672d6b5",
+          "templateId": "uzo.nft",
+          "version": 1
+        },
+        "tipJar": {
+          "contract": "UzoTipJarFactory",
+          "address": "0xfd947C6d9e521b51377652040D239781BEE5775a",
+          "deployBlock": 25930595,
+          "txHash": "0x139afb1a24cdd7266a28dc3dc73e4e5046ea977d83415e9e8bd9aef4144ef29d",
+          "templateId": "uzo.tipjar",
+          "version": 1
+        }
+      },
+      "smokeTests": [
+        {
+          "templateId": "uzo.token",
+          "version": 1,
+          "address": "0xDb4fBBA0a71de6F4E2EFde775F7553BB40b96DB2",
+          "deployer": "0xff08064bC2764216dE386CCdC4412f3727A8B246",
+          "deployBlock": 25931345,
+          "txHash": "0x82fcb6aa16d80c66c7e2dc720582c6a08202c62b94429c3c0b68ad3387e9567d",
+          "verified": true
+        },
+        {
+          "templateId": "uzo.nft",
+          "version": 1,
+          "address": "0xCC43dFd6739AaC0163d3B0de60B390cDfB62D206",
+          "deployer": "0xff08064bC2764216dE386CCdC4412f3727A8B246",
+          "deployBlock": 25931346,
+          "txHash": "0xb557157d2d571bec01ff02bf8653bcb09e14528e37ff94ef11df94f6e5ce250a",
+          "verified": true
+        },
+        {
+          "templateId": "uzo.tipjar",
+          "version": 1,
+          "address": "0x9fdFA1eEFfcA3F1ca33dc2B3c520Df57A044A962",
+          "deployer": "0xff08064bC2764216dE386CCdC4412f3727A8B246",
+          "deployBlock": 25931346,
+          "txHash": "0x6c9d095f66a52e1b722c3a29edd2acf04962095114ff2eb99cedaf3844879632",
+          "verified": true
+        }
+      ]
     }
   }
 }
