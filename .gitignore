@@ -1,0 +1,29 @@
+# secrets and local env
+.env
+.env.*
+!.env.example
+*.key
+.secrets/
+
+# node / next
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# foundry / hardhat
+contracts/out/
+contracts/cache/
+contracts/broadcast/*/31337/
+contracts/artifacts/
+contracts/cache_hardhat/
+
+# misc
+.DS_Store
+coverage/
+lcov.info
+
+# phase 0 spike build output
+phase0/spike/out/
+phase0/spike/cache/
