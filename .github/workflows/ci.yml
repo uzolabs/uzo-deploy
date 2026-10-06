@@ -72,6 +72,10 @@ jobs:
         run: forge build --sizes
       - name: Lint
         run: forge lint src script -D warnings
+      - name: Verification inputs match the build
+        # BOTScan verification submits contracts/verify/*.json. They must compile to exactly the
+        # bytecode the factories deploy.
+        run: node script/standard-json.mjs --check
       - name: Test and gas snapshot
         # Runs every non-fork test (10,000 fuzz runs, fixed seed). Fails if gas moves more than
         # 1%. Fuzz means can shift slightly when the fuzz dictionary changes.

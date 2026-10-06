@@ -30,3 +30,4 @@ phase0/spike/cache/
 
 # forge script simulations
 contracts/broadcast/**/dry-run/
+contracts/foundry-pp/
