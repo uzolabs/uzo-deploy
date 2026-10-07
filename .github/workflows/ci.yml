@@ -134,3 +134,39 @@ jobs:
             echo "::error::Fork tests were skipped."
             exit 1
           fi
+
+  app:
+    name: App
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: ${{ env.FOUNDRY_VERSION }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            contracts/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: ABIs match the contracts
+        run: |
+          (cd contracts && pnpm install --frozen-lockfile && forge build)
+          pnpm abi
+          git diff --exit-code -- lib/abi/generated.ts
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Lint
+        run: pnpm lint
+      - name: Unit tests
+        run: pnpm test
+      - name: Build
+        # The WalletConnect ID is public and only used in the browser. Builds work without it.
+        run: pnpm build
