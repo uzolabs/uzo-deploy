@@ -2,13 +2,14 @@
 
 import { ArrowLeft, CheckCircle2, Loader2, RotateCcw } from "lucide-react"
 import { useEffect, useRef } from "react"
-import { BaseError, isAddressEqual, parseEventLogs, type Address, type Hash, type Hex } from "viem"
+import { isAddressEqual, parseEventLogs, type Address, type Hash, type Hex } from "viem"
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi"
 import { useNetwork } from "@/components/network/network-provider"
 import { Button } from "@/components/ui/button"
 import { explorerTx } from "@/lib/chains"
 import { uzoTokenFactoryAbi } from "@/lib/abi/generated"
 import { deployCall, type DeployInput } from "@/lib/deploy-call"
+import { reason } from "@/lib/wallet-errors"
 
 type Props = {
   factory: Address
@@ -17,14 +18,6 @@ type Props = {
   predicted: Address
   onBack: () => void
   onDeployed: (result: { instance: Address; txHash: Hash }) => void
-}
-
-function reason(error: unknown) {
-  if (error instanceof BaseError) {
-    if (error.walk((e) => (e as { code?: number }).code === 4001)) return "You rejected the request in your wallet."
-    return error.shortMessage
-  }
-  return "Something went wrong. Try again."
 }
 
 /** One transaction: ask the wallet, show the hash, wait for the receipt, read the Deployed event. */

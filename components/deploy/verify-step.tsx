@@ -1,15 +1,16 @@
 "use client"
 
 import Link from "next/link"
-import { BadgeCheck, ExternalLink, Loader2, Plus, RotateCcw, Wallet } from "lucide-react"
+import { BadgeCheck, ExternalLink, Loader2, Plus, RotateCcw, Settings2, Wallet } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Address, Hash } from "viem"
 import { useWatchAsset } from "wagmi"
 import { CopyButton } from "@/components/copy-button"
 import { useNetwork } from "@/components/network/network-provider"
+import { useTipUrl } from "@/components/tip/use-tip-url"
 import { Button } from "@/components/ui/button"
 import type { Template } from "@/config/templates"
-import { explorerAddress, explorerTx } from "@/lib/chains"
+import { explorerAddress, explorerTx, type NetworkKey } from "@/lib/chains"
 import type { DeployInput } from "@/lib/deploy-call"
 import { site } from "@/lib/site"
 import { manualVerifyCommand } from "@/lib/verify"
@@ -122,6 +123,11 @@ export function VerifyStep({ template, input, instance, txHash }: Props) {
         </h2>
         <div className="flex flex-wrap gap-2">
           {input.key === "token" ? <AddToken address={instance} symbol={input.params.symbol} /> : null}
+          <Button asChild className="rounded-full">
+            <Link href={`/manage/${instance}?network=${network}`}>
+              <Settings2 aria-hidden="true" /> Manage
+            </Link>
+          </Button>
           <Button asChild variant="outline" className="rounded-full">
             <a href={explorerAddress(chain, instance)} target="_blank" rel="noreferrer">
               <ExternalLink aria-hidden="true" /> Open on BOTScan
@@ -140,15 +146,10 @@ export function VerifyStep({ template, input, instance, txHash }: Props) {
         </div>
         {input.key === "nft" ? (
           <p className="text-sm text-muted-foreground">
-            Your collection starts empty. As the owner you can mint from BOTScan&apos;s write tab until the management page
-            is ready.
+            Your collection starts empty. Open Manage to mint, set the metadata link and freeze it when you are done.
           </p>
         ) : null}
-        {input.key === "tipJar" ? (
-          <p className="text-sm text-muted-foreground">
-            Tips sent to this address go straight to the recipient. Uzo never holds them.
-          </p>
-        ) : null}
+        {input.key === "tipJar" ? <TipLink jar={instance} network={network} /> : null}
       </section>
     </div>
   )
@@ -184,5 +185,18 @@ function AddToken({ address, symbol }: { address: Address; symbol: string }) {
         </p>
       ) : null}
     </>
+  )
+}
+
+function TipLink({ jar, network }: { jar: Address; network: NetworkKey }) {
+  const url = useTipUrl(jar, network)
+  return (
+    <div className="grid gap-2 text-sm">
+      <p>Share this link to take tips. They go straight to the recipient. Uzo never holds them.</p>
+      <div className="flex items-center gap-1">
+        <code className="min-w-0 flex-1 rounded-lg bg-background/60 p-3 font-mono text-xs break-all">{url}</code>
+        <CopyButton value={url} label="tip link" />
+      </div>
+    </div>
   )
 }

@@ -137,6 +137,12 @@ describe("verification request", () => {
     expect(await file.text()).toBe('{"language":"Solidity"}')
   })
 
+  it("lets BOTScan read the arguments from the creation code when we have none", () => {
+    const form = verificationForm(verificationRequest(instance, "uzo.token", ""), "{}")
+    expect(form.get("autodetect_constructor_args")).toBe("true")
+    expect(form.has("constructor_args")).toBe(false)
+  })
+
   it("gives a manual command", () => {
     expect(manualVerifyCommand("testnet", me)).toBe(`node script/verify-instance.mjs testnet ${me}`)
   })

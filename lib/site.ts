@@ -12,18 +12,13 @@ export const site = {
     botchain: "https://botchain.ai",
     botscan: "https://scan.botchain.ai",
     /** BOT Chain's own faucet: test BOT and test USDT. */
-    faucet: "https://faucet.botchain.ai",
+    faucet: "https://faucet.uzolabs.xyz",
   },
 } as const
 
-/**
- * Routes that land in a later phase. Links to them stay hidden until they exist,
- * so nobody is sent to a page that is not there yet.
- */
-export const features = {
-  manage: false,
-  tip: false,
-  my: false,
-} as const
-
-export const navLinks = [{ label: "Deploy", href: "/deploy" }] as const
+/** Shown in the mobile menu and the footer. The desktop bar adds My contracts once a wallet connects. */
+export const navLinks = [
+  { label: "Deploy", href: "/deploy" },
+  { label: "My contracts", href: "/my" },
+  { label: "Stats", href: "/stats" },
+] as const

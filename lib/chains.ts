@@ -35,3 +35,22 @@ export function explorerAddress(chain: BotChain, address: string) {
 export function explorerTx(chain: BotChain, hash: string) {
   return `${explorerUrl(chain)}/tx/${hash}`
 }
+
+export function chainById(chainId: number): BotChain | undefined {
+  const network = networkForChainId(chainId)
+  return network ? networks[network] : undefined
+}
+
+export function otherNetwork(network: NetworkKey): NetworkKey {
+  return network === "testnet" ? "mainnet" : "testnet"
+}
+
+/**
+ * The RPC URL the app talks to. End-to-end tests point testnet at a local Anvil fork through
+ * NEXT_PUBLIC_TESTNET_RPC_URL. There is deliberately no mainnet override.
+ */
+export function rpcUrl(chain: BotChain): string {
+  const override = process.env.NEXT_PUBLIC_TESTNET_RPC_URL
+  if (chain.id === botChainTestnet.id && override) return override
+  return chain.rpcUrls.default.http[0]
+}

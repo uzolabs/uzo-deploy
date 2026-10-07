@@ -31,3 +31,8 @@ phase0/spike/cache/
 # forge script simulations
 contracts/broadcast/**/dry-run/
 contracts/foundry-pp/
+
+# Playwright
+/test-results/
+/playwright-report/
+/.next-e2e/
