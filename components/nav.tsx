@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Menu } from "lucide-react"
 import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { useAccount } from "wagmi"
 import { NetworkSwitch } from "@/components/network/network-switch"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
@@ -20,36 +21,30 @@ function Wordmark() {
   )
 }
 
-const linkClass =
-  "rounded-full px-3.5 py-2 text-[0.95rem] text-muted-foreground hover:text-foreground aria-[current=page]:bg-foreground/10 aria-[current=page]:text-foreground"
-
 export function Nav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
+  const { isConnected } = useAccount()
 
   return (
     <header className="sticky top-0 z-40 px-4 pt-3 sm:px-6">
       <div className="glass mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 rounded-full px-2 pl-4 sm:px-3 sm:pl-5">
         <Wordmark />
 
-        <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              aria-current={isActive(link.href) ? "page" : undefined}
-              className={linkClass}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <a href={site.links.docs} target="_blank" rel="noreferrer" className={linkClass}>
-            Docs
-          </a>
-        </nav>
-
         <div className="flex items-center gap-2">
+          {isConnected ? (
+            <Link
+              href="/my"
+              aria-current={isActive("/my") ? "page" : undefined}
+              className={cn(
+                "hidden h-10 items-center rounded-full px-4 text-sm font-medium hover:bg-foreground/10 lg:inline-flex",
+                isActive("/my") && "bg-foreground/10 text-primary",
+              )}
+            >
+              My contracts
+            </Link>
+          ) : null}
           <NetworkSwitch className="hidden lg:inline-flex" />
           <ConnectButton showBalance={false} chainStatus="none" accountStatus="address" label="Connect" />
 

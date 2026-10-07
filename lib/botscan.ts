@@ -1,10 +1,11 @@
 import "server-only"
 import { readFile } from "node:fs/promises"
 import path from "node:path"
-import { createPublicClient, getAddress, http, isAddressEqual, type Address, type Hash } from "viem"
+import { getAddress, isAddressEqual, type Address, type Hash } from "viem"
 import { uzoTipJarFactoryAbi, uzoTokenAbi } from "@/lib/abi/generated"
 import { explorerUrl, type BotChain } from "@/lib/chains"
 import { factoriesFor } from "@/lib/deployments"
+import { publicClient } from "@/lib/server/client"
 import {
   bytes32ToId,
   constructorArgsFor,
@@ -73,7 +74,7 @@ export async function verifyInstance(chain: BotChain, rawAddress: string, txHash
   const factories = Object.values(factoriesFor(chain.id)).map((f) => getAddress(f.address))
   if (factories.length === 0) throw new VerifyError(`There are no Uzo factories on ${chain.name} yet.`)
 
-  const client = createPublicClient({ chain, transport: http() })
+  const client = publicClient(chain)
   const hash = txHash ?? (await creationTx(chain, instance))
   const receipt = await client.getTransactionReceipt({ hash }).catch(() => null)
   if (!receipt) throw new VerifyError("That transaction was not found on chain.", 404)
@@ -96,15 +97,19 @@ export async function verifyInstance(chain: BotChain, rawAddress: string, txHash
   if (await isVerified(chain, instance)) return { ...base, status: "already verified", seconds: seconds() }
 
   const tx = await client.getTransaction({ hash })
-  if (!tx.to || !isAddressEqual(tx.to, event.factory)) {
-    // Deployed through another contract, such as a multisig. Phase 4 adds a fallback for this.
-    throw new VerifyError("The creation transaction did not call the factory directly, so it cannot be rebuilt yet.")
+  // Deployed through another contract, such as a multisig: the factory call is not the
+  // transaction input, so BOTScan detects the arguments from the creation code instead.
+  // The Deployed event and uzoTemplate() above already proved which template this is.
+  const direct = tx.to !== null && isAddressEqual(tx.to, event.factory)
+  let args = ""
+  if (direct) {
+    const usdt =
+      event.templateId === "uzo.tipjar"
+        ? await client.readContract({ address: event.factory, abi: uzoTipJarFactoryAbi, functionName: "usdt" })
+        : undefined
+    args = constructorArgsFor(event.templateId, tx.input, usdt)
   }
-  const usdt =
-    event.templateId === "uzo.tipjar"
-      ? await client.readContract({ address: event.factory, abi: uzoTipJarFactoryAbi, functionName: "usdt" })
-      : undefined
-  const req = verificationRequest(instance, event.templateId, constructorArgsFor(event.templateId, tx.input, usdt))
+  const req = verificationRequest(instance, event.templateId, args)
   const input = await readFile(path.join(process.cwd(), "contracts", "verify", req.inputFile))
 
   const res = await fetch(`${explorerUrl(chain)}/api/v2/smart-contracts/${instance}/verification/via/standard-input`, {

@@ -3,9 +3,14 @@ import { isAddress, isHash } from "viem"
 import { z } from "zod"
 import { VerifyError, verifyInstance } from "@/lib/botscan"
 import { botChain, botChainTestnet } from "@/lib/chains"
+import { clientIp, createRateLimiter } from "@/lib/rate-limit"
 
 // Submitting and waiting on BOTScan takes up to about 50 seconds.
 export const maxDuration = 60
+
+// Each call can submit to BOTScan, so one caller gets 10 every 10 minutes. The deploy page
+// retries a pending result up to 4 times, well inside this.
+const limit = createRateLimiter({ limit: 10, windowMs: 10 * 60_000 })
 
 const body = z.object({
   chainId: z.union([z.literal(botChainTestnet.id), z.literal(botChain.id)]),
@@ -17,9 +22,16 @@ const body = z.object({
  * POST { chainId, address, txHash? }. Verifies an instance created by a Uzo factory, using
  * our own build's standard JSON input. Never accepts source code from the client.
  * Idempotent: an already verified contract returns "already verified".
- * Rate limiting per IP is added in Phase 4.
+ * Rate limited per IP.
  */
 export async function POST(request: Request) {
+  const { ok, retryAfter } = limit(clientIp(request.headers))
+  if (!ok) {
+    return NextResponse.json(
+      { error: `Too many verification requests. Try again in ${retryAfter} seconds.` },
+      { status: 429, headers: { "retry-after": String(retryAfter) } },
+    )
+  }
   const parsed = body.safeParse(await request.json().catch(() => null))
   if (!parsed.success) {
     return NextResponse.json({ error: "Send chainId (968 or 677), address and optionally txHash." }, { status: 400 })

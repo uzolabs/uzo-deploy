@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // End-to-end build and Playwright output.
+    ".next-e2e/**",
+    "test-results/**",
+    "playwright-report/**",
     // Foundry project, its libraries and the generated ABIs.
     "contracts/**",
     "lib/abi/generated.ts",

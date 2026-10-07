@@ -114,6 +114,7 @@ export type VerificationRequest = {
   address: Address
   contractName: string
   inputFile: string
+  /** Hex without 0x. Empty when the deploy went through another contract: BOTScan then detects them. */
   constructorArgs: string
 }
 
@@ -128,8 +129,9 @@ export function verificationForm(req: VerificationRequest, input: string | Uint8
   form.set("compiler_version", COMPILER)
   form.set("contract_name", req.contractName)
   form.set("license_type", "mit")
-  form.set("autodetect_constructor_args", "false")
-  form.set("constructor_args", req.constructorArgs)
+  // Without our own arguments, BOTScan reads them from the creation code itself.
+  form.set("autodetect_constructor_args", req.constructorArgs ? "false" : "true")
+  if (req.constructorArgs) form.set("constructor_args", req.constructorArgs)
   const body = typeof input === "string" ? input : new Uint8Array(input)
   form.set("files[0]", new Blob([body], { type: "application/json" }), req.inputFile)
   return form
