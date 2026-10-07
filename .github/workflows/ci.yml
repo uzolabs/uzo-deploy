@@ -165,5 +165,8 @@ jobs:
       - name: Unit tests
         run: pnpm test
       - name: Build
-        # The WalletConnect ID is public and only used in the browser. Builds work without it.
+        # RainbowKit refuses to build without a WalletConnect ID. The real one is set on the
+        # host, never in the repo, so CI builds with a placeholder.
+        env:
+          NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID: ci-placeholder
         run: pnpm build
