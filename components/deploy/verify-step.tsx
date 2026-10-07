@@ -154,16 +154,35 @@ export function VerifyStep({ template, input, instance, txHash }: Props) {
   )
 }
 
+// Wallets never add a token silently. The best we can do is open their "add token" prompt
+// as soon as the deploy lands, once, and keep the button for anyone who dismissed it.
 function AddToken({ address, symbol }: { address: Address; symbol: string }) {
   const watch = useWatchAsset()
+  const { watchAsset } = watch
+  const asked = useRef(false)
+  const add = useCallback(
+    () => watchAsset({ type: "ERC20", options: { address, symbol, decimals: 18 } }),
+    [watchAsset, address, symbol],
+  )
+
+  useEffect(() => {
+    if (asked.current) return
+    asked.current = true
+    add()
+  }, [add])
+
   return (
-    <Button
-      className="rounded-full"
-      disabled={watch.isPending}
-      onClick={() => watch.watchAsset({ type: "ERC20", options: { address, symbol, decimals: 18 } })}
-    >
-      <Wallet aria-hidden="true" />
-      {watch.isSuccess ? "Added to wallet" : "Add to wallet"}
-    </Button>
+    <>
+      <Button className="rounded-full" disabled={watch.isPending || watch.isSuccess} onClick={add}>
+        <Wallet aria-hidden="true" />
+        {watch.isSuccess ? "Added to wallet" : watch.isPending ? "Check your wallet" : "Add to wallet"}
+      </Button>
+      {watch.isError ? (
+        <p className="w-full text-sm text-muted-foreground">
+          Your wallet did not add it. Try the button again, or import it by hand: address {address}, symbol {symbol},
+          18 decimals.
+        </p>
+      ) : null}
+    </>
   )
 }
