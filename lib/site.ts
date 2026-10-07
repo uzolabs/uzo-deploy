@@ -7,7 +7,7 @@ export const site = {
     "Deploy a token, an NFT collection or a tip jar to BOT Chain from your own wallet. Tested, not audited. No fees, no custody.",
   links: {
     home: "https://uzolabs.xyz",
-    docs: "https://docs.uzolabs.xyz",
+    docs: "https://docs.uzolabs.xyz/deploy/overview",
     github: "https://github.com/uzolabs/uzo-deploy",
     botchain: "https://botchain.ai",
     botscan: "https://scan.botchain.ai",
