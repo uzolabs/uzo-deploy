@@ -175,7 +175,8 @@ const scans = new Map<string, { logs: RawLog[]; scannedTo: bigint }>()
  * The key must identify the query; the same key always means the same filter.
  */
 export async function scanLogs(chain: BotChain, key: string, query: Omit<LogQuery, "toBlock">): Promise<RawLog[]> {
-  const head = await publicClient(chain).getBlockNumber()
+  // viem caches the block number for a few seconds; a deploy from a moment ago must count.
+  const head = await publicClient(chain).getBlockNumber({ cacheTime: 0 })
   const safe = head > CONFIRMATIONS ? head - CONFIRMATIONS : 0n
   const storeKey = `${chain.id}:${key}`
   const stored = scans.get(storeKey) ?? { logs: [], scannedTo: query.fromBlock - 1n }
