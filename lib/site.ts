@@ -12,7 +12,7 @@ export const site = {
     botchain: "https://botchain.ai",
     botscan: "https://scan.botchain.ai",
     /** BOT Chain's own faucet: test BOT and test USDT. */
-    faucet: "https://faucet.botchain.ai",
+    faucet: "https://faucet.uzolabs.xyz",
   },
 } as const
 
