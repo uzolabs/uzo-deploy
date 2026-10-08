@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { TelegramIcon, XIcon } from "@/components/brand-icons"
 import { navLinks, site } from "@/lib/site"
 
 const pages = [{ label: "Home", href: "/" }, ...navLinks]
@@ -11,8 +12,9 @@ const external = [
 ]
 
 const community = [
-  { label: "Telegram channel", href: site.links.telegram },
-  { label: "Developer group", href: site.links.telegramDev },
+  { label: "Telegram channel", href: site.links.telegramChannel, Icon: TelegramIcon },
+  { label: "Telegram community", href: site.links.telegramCommunity, Icon: TelegramIcon },
+  { label: "X", href: site.links.x, Icon: XIcon },
 ]
 
 const linkClass = "rounded-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
@@ -67,10 +69,11 @@ export function Footer() {
             Community
           </h2>
           <ul className="mt-4 grid gap-3">
-            {community.map((link) => (
-              <li key={link.label}>
-                <a href={link.href} target="_blank" rel="noreferrer" className={linkClass}>
-                  {link.label}
+            {community.map(({ label, href, Icon }) => (
+              <li key={label}>
+                <a href={href} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
+                  <Icon className="size-4 shrink-0" />
+                  {label}
                 </a>
               </li>
             ))}

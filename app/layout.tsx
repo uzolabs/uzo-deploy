@@ -35,6 +35,17 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 })
 
+const organization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.org,
+  url: site.links.home,
+  logo: new URL("/icon.svg", site.url).toString(),
+  sameAs: [site.links.x, site.links.githubOrg, site.links.telegramChannel].filter(Boolean),
+}
+
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { default: site.title, template: `%s | ${site.name}` },
@@ -51,6 +62,7 @@ export const metadata: Metadata = {
     title: site.title,
     description: site.description,
   },
+  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
 }
 
 export const viewport: Viewport = {
@@ -66,6 +78,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       {/* Extensions like Grammarly add attributes to body before React loads. */}
       <body className="min-h-dvh" suppressHydrationWarning>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organization).replace(/</g, "\\u003c") }}
+        />
         <Background />
         <Providers>
           <TooltipProvider delayDuration={200}>

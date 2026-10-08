@@ -14,9 +14,11 @@ export const site = {
     /** BOT Chain's own faucet: test BOT and test USDT. */
     faucet: "https://faucet.uzolabs.xyz",
     /** Official announcements. */
-    telegram: "https://t.me/uzolabs",
+    telegramChannel: "https://t.me/uzolabs",
     /** Developer community group. */
-    telegramDev: "https://t.me/uzolabsdev",
+    telegramCommunity: "https://t.me/uzolabsdev",
+    x: "https://x.com/uzolabs",
+    githubOrg: "https://github.com/uzolabs",
   },
 } as const
 

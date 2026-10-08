@@ -12,6 +12,8 @@ import { findInstance, networkParam } from "@/lib/server/lookup"
 export const metadata: Metadata = {
   title: "Send a tip",
   description: "Send a tip in BOT or USDT on BOT Chain. It goes straight to the recipient's wallet.",
+  // Anyone can deploy a tip jar, so these pages stay out of search results under the Uzo name.
+  robots: { index: false },
 }
 
 export default async function TipPage({ params, searchParams }: PageProps<"/tip/[address]">) {
