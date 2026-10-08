@@ -10,12 +10,17 @@ const external = [
   { label: "Testnet faucet", href: site.links.faucet },
 ]
 
+const community = [
+  { label: "Telegram channel", href: site.links.telegram },
+  { label: "Developer group", href: site.links.telegramDev },
+]
+
 const linkClass = "rounded-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
 
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-glass-border">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1fr_auto_auto] md:items-start md:gap-16">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1fr_auto_auto_auto] md:items-start md:gap-16">
         <div className="grid gap-4">
           <Link href="/" className="w-fit rounded-sm" aria-label="Uzo Deploy home">
             <span className="font-display text-[1.75rem] leading-none">Uzo</span>{" "}
@@ -57,7 +62,22 @@ export function Footer() {
           </ul>
         </nav>
 
-        <div className="grid gap-2 border-t border-glass-border pt-6 text-sm text-muted-foreground md:col-span-3">
+        <nav aria-labelledby="footer-community">
+          <h2 id="footer-community" className="text-sm font-medium tracking-[0.14em] text-primary uppercase">
+            Community
+          </h2>
+          <ul className="mt-4 grid gap-3">
+            {community.map((link) => (
+              <li key={link.label}>
+                <a href={link.href} target="_blank" rel="noreferrer" className={linkClass}>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="grid gap-2 border-t border-glass-border pt-6 text-sm text-muted-foreground md:col-span-4">
           <p>
             Built on BOT Chain:{" "}
             <a href={site.links.botchain} target="_blank" rel="noreferrer" className={linkClass}>

@@ -13,6 +13,10 @@ export const site = {
     botscan: "https://scan.botchain.ai",
     /** BOT Chain's own faucet: test BOT and test USDT. */
     faucet: "https://faucet.uzolabs.xyz",
+    /** Official announcements. */
+    telegram: "https://t.me/uzolabs",
+    /** Developer community group. */
+    telegramDev: "https://t.me/uzolabsdev",
   },
 } as const
 
