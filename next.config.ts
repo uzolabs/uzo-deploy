@@ -16,6 +16,22 @@ const nextConfig: NextConfig = {
   turbopack: {
     resolveAlias: Object.fromEntries(unused.map((m) => [m, "./lib/empty-module.cjs"])),
   },
+  // Pages ask wallets to sign, so no other site may frame them. A full script CSP waits until
+  // the WalletConnect hosts it needs are tested.
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+        ],
+      },
+    ]
+  },
 }
 
 export default nextConfig

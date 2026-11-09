@@ -19,6 +19,8 @@ const eslintConfig = defineConfig([
     // Foundry project, its libraries and the generated ABIs.
     "contracts/**",
     "lib/abi/generated.ts",
+    // Installed agent skills (third-party scripts).
+    ".agents/**",
   ]),
 ]);
 

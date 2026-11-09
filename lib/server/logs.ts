@@ -168,22 +168,54 @@ async function fetchLogs(chain: BotChain, q: LogQuery): Promise<RawLog[]> {
 // recent blocks are read fresh each time in case they are reorganised.
 const CONFIRMATIONS = 20n
 
-const scans = new Map<string, { logs: RawLog[]; scannedTo: bigint }>()
+type Scan = { logs: RawLog[]; scannedTo: bigint; covered: Set<string> }
+
+const scans = new Map<string, Scan>()
+
+const addressList = (a: LogQuery["address"]) => (a === undefined ? [] : Array.isArray(a) ? a : [a])
 
 /**
  * Every log matching `query` from `fromBlock` to the chain head, read incrementally.
- * The key must identify the query; the same key always means the same filter.
+ * The key must identify the query's topics. Its address list may grow between calls (a new
+ * tip jar): blocks already read are then read again for the new addresses only, starting at
+ * `startOf(address)` when given, so nothing they emitted earlier is missed.
  */
-export async function scanLogs(chain: BotChain, key: string, query: Omit<LogQuery, "toBlock">): Promise<RawLog[]> {
+export async function scanLogs(
+  chain: BotChain,
+  key: string,
+  query: Omit<LogQuery, "toBlock">,
+  startOf?: (address: Address) => bigint,
+): Promise<RawLog[]> {
   // viem caches the block number for a few seconds; a deploy from a moment ago must count.
   const head = await publicClient(chain).getBlockNumber({ cacheTime: 0 })
   const safe = head > CONFIRMATIONS ? head - CONFIRMATIONS : 0n
   const storeKey = `${chain.id}:${key}`
-  const stored = scans.get(storeKey) ?? { logs: [], scannedTo: query.fromBlock - 1n }
+  const addresses = addressList(query.address)
+  let stored: Scan = scans.get(storeKey) ?? {
+    logs: [],
+    scannedTo: query.fromBlock - 1n,
+    covered: new Set(addresses.map((a) => a.toLowerCase())),
+  }
+
+  const added = addresses.filter((a) => !stored.covered.has(a.toLowerCase()))
+  if (added.length > 0) {
+    const starts = added.map((a) => startOf?.(a) ?? query.fromBlock)
+    const from = starts.reduce((min, b) => (b < min ? b : min), stored.scannedTo + 1n)
+    const caught =
+      from <= stored.scannedTo
+        ? await fetchLogs(chain, { ...query, address: added, fromBlock: from, toBlock: stored.scannedTo })
+        : []
+    stored = {
+      logs: dedupe([...stored.logs, ...caught]),
+      scannedTo: stored.scannedTo,
+      covered: new Set([...stored.covered, ...added.map((a) => a.toLowerCase())]),
+    }
+    scans.set(storeKey, stored)
+  }
 
   if (stored.scannedTo < safe) {
     const fresh = await fetchLogs(chain, { ...query, fromBlock: stored.scannedTo + 1n, toBlock: safe })
-    scans.set(storeKey, { logs: dedupe([...stored.logs, ...fresh]), scannedTo: safe })
+    scans.set(storeKey, { ...stored, logs: dedupe([...stored.logs, ...fresh]), scannedTo: safe })
   }
   const settled = scans.get(storeKey) ?? stored
   const tail =

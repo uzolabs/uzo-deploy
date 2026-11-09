@@ -59,19 +59,23 @@ export async function deploymentOf(chain: BotChain, instance: Address) {
 }
 
 /**
- * Every Tipped event from a jar our factory created, oldest first. The scan filters on the
- * event only, then keeps logs from known jars, so a contract that copies the event is ignored.
+ * Every Tipped event from a jar our factory created, oldest first. The scan asks only for
+ * logs from known jars, so a contract that copies the event is never read or kept.
  */
 export function allTips(chain: BotChain): Promise<Tip[]> {
   return cached(`tips:${chain.id}`, SHORT, async () => {
     const factory = factoriesFor(chain.id).tipJar
     if (!factory) return []
-    const jars = new Set(
-      (await deployedEvents(chain)).filter((d) => d.templateId === "uzo.tipjar").map((d) => d.instance.toLowerCase()),
+    const jars = (await deployedEvents(chain)).filter((d) => d.templateId === "uzo.tipjar")
+    if (jars.length === 0) return []
+    const born = new Map(jars.map((d) => [d.instance.toLowerCase(), BigInt(d.blockNumber)]))
+    const logs = await scanLogs(
+      chain,
+      "tipped",
+      { address: jars.map((d) => d.instance), topics: [TIPPED_TOPIC], fromBlock: BigInt(factory.deployBlock) },
+      (jar) => born.get(jar.toLowerCase()) ?? BigInt(factory.deployBlock),
     )
-    if (jars.size === 0) return []
-    const logs = await scanLogs(chain, "tipped", { topics: [TIPPED_TOPIC], fromBlock: BigInt(factory.deployBlock) })
-    const ours = logs.filter((l) => jars.has(l.address.toLowerCase()))
+    const ours = logs.filter((l) => born.has(l.address.toLowerCase()))
     return (await withTimestamps(chain, ours)).map(decodeTipped).filter((t) => t !== undefined)
   })
 }
