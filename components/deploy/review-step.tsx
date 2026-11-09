@@ -216,6 +216,10 @@ export function ReviewStep({ template, factory, factoryVerified, input, salt, on
             </dl>
           )}
 
+          {network === "mainnet" ? (
+            <p className="text-xs text-muted-foreground">Mainnet: real BOT is spent. Templates are tested, not audited.</p>
+          ) : null}
+
           {tooLow ? (
             <div role="alert" className="rounded-2xl border border-destructive/60 bg-destructive/10 p-4 text-sm">
               {network === "testnet" ? (
