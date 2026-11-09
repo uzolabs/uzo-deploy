@@ -4,7 +4,32 @@
   "chains": {
     "677": {
       "network": "mainnet",
-      "factories": {}
+      "factories": {
+        "token": {
+          "contract": "UzoTokenFactory",
+          "address": "0x9D66023a9ab4a062701f0432156a3AC2Fb7964F6",
+          "deployBlock": 29697532,
+          "txHash": "0xa04e1b415978e20adc97c8bc536d5d9185478df9ee717988e04ca8afe3039efc",
+          "templateId": "uzo.token",
+          "version": 1
+        },
+        "nft": {
+          "contract": "UzoNFTFactory",
+          "address": "0xaF987D1BaEaAAcfD74b347618119AdeC04a21814",
+          "deployBlock": 29697533,
+          "txHash": "0x10eb279341f5b834eccbac73b07616eb6fc2137729d1fe763297ee2cbf4d1a9c",
+          "templateId": "uzo.nft",
+          "version": 1
+        },
+        "tipJar": {
+          "contract": "UzoTipJarFactory",
+          "address": "0x4925f24c3f51A31F1Dd4EbFE744b3e265240261c",
+          "deployBlock": 29697534,
+          "txHash": "0x5cecf63d7644106a9da975413e32cbabb1d9c9420c953411f82ac275a6ca41a5",
+          "templateId": "uzo.tipjar",
+          "version": 1
+        }
+      }
     },
     "968": {
       "network": "testnet",
