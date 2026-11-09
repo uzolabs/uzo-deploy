@@ -20,7 +20,7 @@ const steps = ["Configure", "Review", "Sign", "Verify"] as const
 type State =
   | { step: 0 }
   | { step: 1; input: DeployInput; salt: Hex }
-  | { step: 2; input: DeployInput; salt: Hex; predicted: Address }
+  | { step: 2; input: DeployInput; salt: Hex; predicted: Address; fee: bigint }
   | { step: 3; input: DeployInput; instance: Address; txHash: Hash }
 
 function toInput(template: Template, values: FormValues): DeployInput {
@@ -113,7 +113,7 @@ function Flow({ template, verified }: Props) {
           input={state.input}
           salt={state.salt}
           onBack={() => setState({ step: 0 })}
-          onSign={(predicted) => setState({ ...state, step: 2, predicted })}
+          onSign={(predicted, fee) => setState({ ...state, step: 2, predicted, fee })}
         />
       ) : null}
 
@@ -123,6 +123,7 @@ function Flow({ template, verified }: Props) {
           input={state.input}
           salt={state.salt}
           predicted={state.predicted}
+          fee={state.fee}
           onBack={() => setState({ step: 1, input: state.input, salt: state.salt })}
           onDeployed={onDeployed}
         />

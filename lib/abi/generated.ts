@@ -513,6 +513,14 @@ export const uzoNftAbi = [
 
 export const uzoNftFactoryAbi = [
   {
+    type: 'constructor',
+    inputs: [
+      { name: 'fee_', internalType: 'uint256', type: 'uint256' },
+      { name: 'feeRecipient_', internalType: 'address', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
     type: 'function',
     inputs: [
       { name: 'userSalt', internalType: 'bytes32', type: 'bytes32' },
@@ -533,7 +541,21 @@ export const uzoNftFactoryAbi = [
     ],
     name: 'deploy',
     outputs: [{ name: 'instance', internalType: 'address', type: 'address' }],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'fee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -589,6 +611,16 @@ export const uzoNftFactoryAbi = [
       },
     ],
     name: 'Deployed',
+  },
+  { type: 'error', inputs: [], name: 'FeeTransferFailed' },
+  { type: 'error', inputs: [], name: 'InvalidFeeRecipient' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'expected', internalType: 'uint256', type: 'uint256' },
+      { name: 'sent', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'WrongFee',
   },
 ] as const
 
@@ -723,7 +755,11 @@ export const uzoTipJarAbi = [
 export const uzoTipJarFactoryAbi = [
   {
     type: 'constructor',
-    inputs: [{ name: 'usdt_', internalType: 'address', type: 'address' }],
+    inputs: [
+      { name: 'usdt_', internalType: 'address', type: 'address' },
+      { name: 'fee_', internalType: 'uint256', type: 'uint256' },
+      { name: 'feeRecipient_', internalType: 'address', type: 'address' },
+    ],
     stateMutability: 'nonpayable',
   },
   {
@@ -735,7 +771,21 @@ export const uzoTipJarFactoryAbi = [
     ],
     name: 'deploy',
     outputs: [{ name: 'instance', internalType: 'address', type: 'address' }],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'fee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -787,7 +837,17 @@ export const uzoTipJarFactoryAbi = [
     ],
     name: 'Deployed',
   },
+  { type: 'error', inputs: [], name: 'FeeTransferFailed' },
+  { type: 'error', inputs: [], name: 'InvalidFeeRecipient' },
   { type: 'error', inputs: [], name: 'InvalidUsdt' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'expected', internalType: 'uint256', type: 'uint256' },
+      { name: 'sent', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'WrongFee',
+  },
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1081,6 +1141,14 @@ export const uzoTokenAbi = [
 
 export const uzoTokenFactoryAbi = [
   {
+    type: 'constructor',
+    inputs: [
+      { name: 'fee_', internalType: 'uint256', type: 'uint256' },
+      { name: 'feeRecipient_', internalType: 'address', type: 'address' },
+    ],
+    stateMutability: 'nonpayable',
+  },
+  {
     type: 'function',
     inputs: [
       { name: 'userSalt', internalType: 'bytes32', type: 'bytes32' },
@@ -1091,7 +1159,21 @@ export const uzoTokenFactoryAbi = [
     ],
     name: 'deploy',
     outputs: [{ name: 'instance', internalType: 'address', type: 'address' }],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'fee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'feeRecipient',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
   },
   {
     type: 'function',
@@ -1137,5 +1219,15 @@ export const uzoTokenFactoryAbi = [
       },
     ],
     name: 'Deployed',
+  },
+  { type: 'error', inputs: [], name: 'FeeTransferFailed' },
+  { type: 'error', inputs: [], name: 'InvalidFeeRecipient' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'expected', internalType: 'uint256', type: 'uint256' },
+      { name: 'sent', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'WrongFee',
   },
 ] as const

@@ -13,8 +13,10 @@ The contracts are **tested, not audited**.
 | NFT Collection | An ERC-721 with a capped supply, owner minting, optional royalties and freezable metadata. |
 | Tip Jar | Takes tips in BOT or USDT with a short message and forwards them straight to the recipient. |
 
-Every contract is deployed by an immutable Uzo factory with no owner and no fees. Uzo Labs holds
-no keys over anything you deploy.
+Every contract is deployed by an immutable Uzo factory with no owner. Each deploy pays a fixed
+0.1 BOT fee (0.1 test BOT on testnet), set in the factory's constructor and forwarded in the same
+transaction to Uzo's wallet `0x2b5D37D93432f25e65BD8bed07cFbc303b72389D`. The fee can never change
+and tips never pay it. Uzo Labs holds no funds and no keys over anything you deploy.
 
 ## Testnet USDT
 

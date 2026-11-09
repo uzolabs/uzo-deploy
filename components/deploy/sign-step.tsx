@@ -16,19 +16,21 @@ type Props = {
   input: DeployInput
   salt: Hex
   predicted: Address
+  /** The factory's fee, read on review. The factory checks it again. */
+  fee: bigint
   onBack: () => void
   onDeployed: (result: { instance: Address; txHash: Hash }) => void
 }
 
 /** One transaction: ask the wallet, show the hash, wait for the receipt, read the Deployed event. */
-export function SignStep({ factory, input, salt, predicted, onBack, onDeployed }: Props) {
+export function SignStep({ factory, input, salt, predicted, fee, onBack, onDeployed }: Props) {
   const { chain } = useNetwork()
   const write = useWriteContract()
   const receipt = useWaitForTransactionReceipt({ hash: write.data, chainId: chain.id, pollingInterval: 1000 })
   const asked = useRef(false)
   const reported = useRef(false)
 
-  const send = () => write.writeContract({ ...deployCall(factory, input, salt), chainId: chain.id })
+  const send = () => write.writeContract({ ...deployCall(factory, input, salt, fee), chainId: chain.id })
 
   // Open the wallet as soon as this step appears. The ref keeps React's dev double-run from asking twice.
   useEffect(() => {

@@ -32,7 +32,7 @@ contract UzoTipJarForkTest is Test {
         forked = true;
 
         usdt = IERC20(usdtAddr);
-        factory = new UzoTipJarFactory(usdtAddr);
+        factory = new UzoTipJarFactory(usdtAddr, 0, makeAddr("fees"));
         vm.prank(recipient);
         jar = UzoTipJar(factory.deploy(bytes32("fork"), recipient, "Fork test"));
     }

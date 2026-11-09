@@ -24,8 +24,12 @@ Foundry 1.8.3.
   USDT moves with `transferFrom(tipper, recipient)`. There is no `receive` or `fallback`, so plain
   transfers revert. Checked by unit tests and by three invariants over 16,384 random calls
   (`test/invariant/UzoTipJar.invariant.t.sol`).
-- **No fees and no admin keys.** No factory has an owner, a pause, an upgrade path or a fee. Only
-  `UzoNFT` has an owner, and that is the address the user picks.
+- **No admin keys.** No factory has an owner, a pause or an upgrade path. Only `UzoNFT` has an
+  owner, and that is the address the user picks.
+- **A fixed deploy fee, never held.** Each factory takes an immutable `fee` and `feeRecipient` in
+  its constructor (`src/factories/UzoFee.sol`). `deploy` must send exactly `fee`, and the factory
+  forwards it to `feeRecipient` as its last step, so a factory never holds funds. A deploy that
+  reverts takes no fee, and tips never pay it. Tested in `test/Factories.t.sol`.
 - **No address squatting.** The CREATE2 salt is `keccak256(abi.encode(msg.sender, userSalt))`,
   so nobody can deploy to an address predicted for someone else. Tested in `test/Factories.t.sol`.
 - **Predictable addresses.** `predictAddress` matches `deploy` for random salts and arguments
@@ -36,7 +40,7 @@ Foundry 1.8.3.
 
 ## Test results
 
-- 86 tests: unit, fuzz (10,000 runs, fixed seed `0x5a0`), invariant (256 runs, depth 64) and
+- 96 tests: unit, fuzz (10,000 runs, fixed seed `0x5a0`), invariant (256 runs, depth 64) and
   deploy script tests. All pass.
 - 5 fork tests run the tip jar against real testnet USDT. They skip when the testnet env from
   `script/sdk-env.mjs` is not loaded.

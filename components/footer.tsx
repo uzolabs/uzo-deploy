@@ -29,8 +29,8 @@ export function Footer() {
             <span className="text-sm font-medium text-muted-foreground">Deploy</span>
           </Link>
           <p className="max-w-sm text-sm text-muted-foreground">
-            Templates are tested, not audited. Uzo charges no fees, holds no funds and keeps no admin keys over what
-            you deploy.
+            Templates are tested, not audited. Each deploy pays a fixed 0.1 BOT fee. Uzo holds no funds and keeps
+            no admin keys over what you deploy.
           </p>
         </div>
 

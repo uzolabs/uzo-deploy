@@ -4,7 +4,7 @@ export const site = {
   url: "https://deploy.uzolabs.xyz",
   title: "Uzo Deploy: tested contract templates for BOT Chain",
   description:
-    "Deploy a token, an NFT collection or a tip jar to BOT Chain from your own wallet. Tested, not audited. No fees, no custody.",
+    "Deploy a token, an NFT collection or a tip jar to BOT Chain from your own wallet. Tested, not audited. No custody, no admin keys.",
   links: {
     home: "https://uzolabs.xyz",
     docs: "https://docs.uzolabs.xyz/deploy/overview",

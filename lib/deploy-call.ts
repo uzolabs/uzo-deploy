@@ -17,12 +17,20 @@ export type DeployInput =
  */
 export type ContractCall = { address: Address; abi: Abi; functionName: string; args: readonly unknown[] }
 
+/** A deploy call also carries the factory's fee, which the factory forwards to Uzo's wallet. */
+export type DeployCall = ContractCall & { value: bigint }
+
 /** A fresh random salt. Generated once per review so the predicted address stays stable. */
 export function randomSalt(): Hex {
   return bytesToHex(crypto.getRandomValues(new Uint8Array(32)))
 }
 
-export function deployCall(factory: Address, input: DeployInput, salt: Hex): ContractCall {
+/** The deploy transaction. `fee` is the factory's `fee()`, read from the chain. */
+export function deployCall(factory: Address, input: DeployInput, salt: Hex, fee: bigint): DeployCall {
+  return { ...deployArgs(factory, input, salt), value: fee }
+}
+
+function deployArgs(factory: Address, input: DeployInput, salt: Hex): ContractCall {
   switch (input.key) {
     case "token": {
       const p = input.params

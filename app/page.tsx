@@ -9,8 +9,8 @@ import { site } from "@/lib/site"
 
 const notes = [
   {
-    title: "No fees",
-    body: "You pay network gas and nothing else. Uzo takes no cut of the deploy, the supply or any tips.",
+    title: "One small fee",
+    body: "Each deploy costs network gas plus a fixed 0.1 BOT fee, shown before you sign. Uzo takes no cut of your supply or any tips.",
   },
   {
     title: "No custody",

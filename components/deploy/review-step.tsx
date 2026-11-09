@@ -10,6 +10,7 @@ import { useNetwork } from "@/components/network/network-provider"
 import { Button } from "@/components/ui/button"
 import type { Template } from "@/config/templates"
 import { explorerAddress } from "@/lib/chains"
+import { uzoTokenFactoryAbi } from "@/lib/abi/generated"
 import { deployCall, predictCall, type DeployInput } from "@/lib/deploy-call"
 import { formatAmount, formatBot, formatGas } from "@/lib/format"
 import { site } from "@/lib/site"
@@ -21,7 +22,7 @@ type Props = {
   input: DeployInput
   salt: Hex
   onBack: () => void
-  onSign: (predicted: Address) => void
+  onSign: (predicted: Address, fee: bigint) => void
 }
 
 /** Every parameter, in the units the contract receives, next to the plain reading. */
@@ -81,22 +82,31 @@ export function ReviewStep({ template, factory, factoryVerified, input, salt, on
     query: { enabled: Boolean(account) },
   })
 
-  const call = deployCall(factory, input, salt)
+  // The fee is fixed in each factory and read from it, so the page can never show a different
+  // amount than the contract charges. All three factories share the same fee() function.
+  const feeRead = useReadContract({ address: factory, abi: uzoTokenFactoryAbi, functionName: "fee", chainId: chain.id })
+  const fee = feeRead.data
+
+  const call = deployCall(factory, input, salt, fee ?? 0n)
   const gas = useEstimateGas({
     account,
     to: factory,
     data: encodeFunctionData(call),
+    value: call.value,
     chainId: chain.id,
-    query: { enabled: Boolean(account) },
+    query: { enabled: Boolean(account) && fee !== undefined },
   })
   const gasPrice = useGasPrice({ chainId: chain.id })
   const balance = useBalance({ address: account, chainId: chain.id, query: { enabled: Boolean(account) } })
 
   const symbol = chain.nativeCurrency.symbol
   const cost = gas.data !== undefined && gasPrice.data !== undefined ? gas.data * gasPrice.data : undefined
-  const tooLow = cost !== undefined && balance.data !== undefined && balance.data.value < cost
+  const total = cost !== undefined && fee !== undefined ? cost + fee : undefined
+  const tooLow = total !== undefined && balance.data !== undefined && balance.data.value < total
   const predicted = prediction.data as Address | undefined
-  const ready = Boolean(factoryVerified !== false && account && onChain && predicted && cost !== undefined && !tooLow && !gas.isError)
+  const ready = Boolean(
+    factoryVerified !== false && account && onChain && predicted && fee !== undefined && total !== undefined && !tooLow && !gas.isError,
+  )
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
@@ -188,8 +198,17 @@ export function ReviewStep({ template, factory, factoryVerified, input, salt, on
                     ? formatGas(gas.data)
                     : `About ${template.typicalGas.toLocaleString("en-US")}`}
               </Row>
-              <Row label="Estimated cost">
+              <Row label="Estimated gas cost">
                 {cost !== undefined ? formatBot(cost, symbol) : "Estimating"}
+              </Row>
+              <Row label="Uzo fee">
+                {feeRead.isError ? "Could not read the fee. Check your connection and try again." : fee !== undefined ? formatBot(fee, symbol) : "Loading"}
+                <span className="mt-1 block text-sm text-muted-foreground">
+                  Fixed in the factory and paid once per deploy. It goes straight to Uzo&apos;s wallet. Tips never pay it.
+                </span>
+              </Row>
+              <Row label="Total">
+                <span className="font-medium">{total !== undefined ? formatBot(total, symbol) : "Estimating"}</span>
               </Row>
               <Row label="Your balance">
                 {balance.data ? formatBot(balance.data.value, symbol) : "Loading"}
@@ -210,7 +229,7 @@ export function ReviewStep({ template, factory, factoryVerified, input, salt, on
                 </>
               ) : (
                 <>
-                  You need BOT for gas. See{" "}
+                  You need BOT for gas and the Uzo fee. See{" "}
                   <a href={site.links.botchain} target="_blank" rel="noreferrer" className="underline underline-offset-4">
                     botchain.ai
                   </a>
@@ -227,7 +246,7 @@ export function ReviewStep({ template, factory, factoryVerified, input, salt, on
           <Button
             className="h-12 w-full rounded-full text-base"
             disabled={!ready}
-            onClick={() => predicted && onSign(predicted)}
+            onClick={() => predicted && fee !== undefined && onSign(predicted, fee)}
           >
             <PenLine aria-hidden="true" />
             Sign and deploy

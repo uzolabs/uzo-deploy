@@ -15,6 +15,7 @@ import {UzoTipJarFactory} from "../src/factories/UzoTipJarFactory.sol";
 ///   UZO_NETWORK=testnet forge script script/DeploySmoke.s.sol --rpc-url bot_testnet \
 ///     --account <keystore name> --broadcast
 ///
+/// Each deploy pays the factory's fee, which goes to Uzo's fee wallet.
 /// Safe to run again: an instance that already exists is skipped.
 contract DeploySmoke is Script {
     bytes32 internal constant USER_SALT = keccak256("uzo.deploy.smoke.v1");
@@ -52,7 +53,9 @@ contract DeploySmoke is Script {
         uint256 supply = 1_000_000 ether;
         instance = factory.predictAddress(me, USER_SALT, name, symbol, supply, me);
         if (_isNew(instance, "UzoToken")) {
-            _check(factory.deploy(USER_SALT, name, symbol, supply, me), instance);
+            _check(
+                factory.deploy{value: factory.fee()}(USER_SALT, name, symbol, supply, me), instance
+            );
         }
     }
 
@@ -67,13 +70,17 @@ contract DeploySmoke is Script {
             royaltyBps: 500
         });
         instance = factory.predictAddress(me, USER_SALT, p);
-        if (_isNew(instance, "UzoNFT")) _check(factory.deploy(USER_SALT, p), instance);
+        if (_isNew(instance, "UzoNFT")) {
+            _check(factory.deploy{value: factory.fee()}(USER_SALT, p), instance);
+        }
     }
 
     function _tipJar(UzoTipJarFactory factory, address me) internal returns (address instance) {
         string memory title = "Uzo smoke test tip jar";
         instance = factory.predictAddress(me, USER_SALT, me, title);
-        if (_isNew(instance, "UzoTipJar")) _check(factory.deploy(USER_SALT, me, title), instance);
+        if (_isNew(instance, "UzoTipJar")) {
+            _check(factory.deploy{value: factory.fee()}(USER_SALT, me, title), instance);
+        }
     }
 
     function _factories(uint256 chainId) internal view returns (Factories memory f) {

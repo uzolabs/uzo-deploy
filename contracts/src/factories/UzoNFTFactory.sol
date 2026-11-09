@@ -2,13 +2,20 @@
 pragma solidity 0.8.28;
 
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
+import {UzoFee} from "./UzoFee.sol";
 import {UzoNFT, UZO_NFT_ID, UZO_NFT_VERSION} from "../templates/UzoNFT.sol";
 
 /// @title UzoNFTFactory
-/// @notice Deploys UzoNFT collections with CREATE2. It has no owner, no fees and no state.
+/// @notice Deploys UzoNFT collections with CREATE2. It has no owner and no state beyond its fee,
+/// fixed at deployment (see UzoFee).
 /// The salt includes the caller, so nobody can take another person's address.
 /// @dev Tested, not audited.
-contract UzoNFTFactory {
+contract UzoNFTFactory is UzoFee {
+    /// @notice Creates the factory.
+    /// @param fee_ Native amount every deploy must send, in wei.
+    /// @param feeRecipient_ Receives every fee. Must not be the zero address.
+    constructor(uint256 fee_, address feeRecipient_) UzoFee(fee_, feeRecipient_) {}
+
     /// @notice A new instance was deployed.
     /// @param deployer Who called `deploy`.
     /// @param instance The new contract.
@@ -39,19 +46,25 @@ contract UzoNFTFactory {
         uint96 royaltyBps;
     }
 
-    /// @notice Deploys a new UzoNFT collection.
+    /// @notice Deploys a new UzoNFT collection. Send exactly `fee`.
     /// @param userSalt Any value. Combined with the caller to make the CREATE2 salt.
     /// @param p Constructor arguments for the collection.
     /// @return instance The new collection.
-    function deploy(bytes32 userSalt, Params calldata p) external returns (address instance) {
+    function deploy(bytes32 userSalt, Params calldata p)
+        external
+        payable
+        returns (address instance)
+    {
+        _checkFee();
         instance = address(
             new UzoNFT{salt: _salt(msg.sender, userSalt)}(
                 p.name, p.symbol, p.baseURI, p.maxSupply, p.owner, p.royaltyReceiver, p.royaltyBps
             )
         );
-        // The only external call is our own template constructor, so the order is safe.
+        // The template constructor is our own code, and the fee is paid last, so the order is safe.
         // forge-lint: disable-next-line(reentrancy-events)
         emit Deployed(msg.sender, instance, UZO_NFT_ID, UZO_NFT_VERSION);
+        _payFee();
     }
 
     /// @notice The address `deploy` would return for these inputs.

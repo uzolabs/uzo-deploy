@@ -2,14 +2,15 @@
 pragma solidity 0.8.28;
 
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
+import {UzoFee} from "./UzoFee.sol";
 import {UzoTipJar, UZO_TIP_JAR_ID, UZO_TIP_JAR_VERSION} from "../templates/UzoTipJar.sol";
 
 /// @title UzoTipJarFactory
-/// @notice Deploys UzoTipJar contracts with CREATE2. It has no owner and no fees. Its only
-/// state is the USDT address, fixed at deployment. The salt includes the caller, so nobody
-/// can take another person's address.
+/// @notice Deploys UzoTipJar contracts with CREATE2. It has no owner. Its only state is the
+/// USDT address and its fee (see UzoFee), all fixed at deployment. The salt includes the
+/// caller, so nobody can take another person's address. Tips never pay a fee.
 /// @dev Tested, not audited.
-contract UzoTipJarFactory {
+contract UzoTipJarFactory is UzoFee {
     /// @notice The token every tip jar from this factory accepts in `tipToken`.
     address public immutable usdt;
 
@@ -30,26 +31,31 @@ contract UzoTipJarFactory {
 
     /// @notice Creates the factory.
     /// @param usdt_ USDT on this chain. Must be a deployed contract.
+    /// @param fee_ Native amount every deploy must send, in wei.
+    /// @param feeRecipient_ Receives every fee. Must not be the zero address.
     // The code-length check below also rejects the zero address.
     // forge-lint: disable-next-line(missing-zero-check)
-    constructor(address usdt_) {
+    constructor(address usdt_, uint256 fee_, address feeRecipient_) UzoFee(fee_, feeRecipient_) {
         if (usdt_.code.length == 0) revert InvalidUsdt();
         usdt = usdt_;
     }
 
-    /// @notice Deploys a new UzoTipJar for `recipient`.
+    /// @notice Deploys a new UzoTipJar for `recipient`. Send exactly `fee`.
     /// @param userSalt Any value. Combined with the caller to make the CREATE2 salt.
     /// @param recipient Receives every tip.
     /// @param title Title for the tip page, at most 64 bytes.
     /// @return instance The new tip jar.
     function deploy(bytes32 userSalt, address recipient, string calldata title)
         external
+        payable
         returns (address instance)
     {
+        _checkFee();
         instance = address(new UzoTipJar{salt: _salt(msg.sender, userSalt)}(recipient, usdt, title));
-        // The only external call is our own template constructor, so the order is safe.
+        // The template constructor is our own code, and the fee is paid last, so the order is safe.
         // forge-lint: disable-next-line(reentrancy-events)
         emit Deployed(msg.sender, instance, UZO_TIP_JAR_ID, UZO_TIP_JAR_VERSION);
+        _payFee();
     }
 
     /// @notice The address `deploy` would return for these inputs.

@@ -29,6 +29,7 @@ const me = getAddress("0xff08064bc2764216de386ccdc4412f3727a8b246")
 const usdt = getAddress("0x1111111111111111111111111111111111111111")
 const instance = getAddress("0x2222222222222222222222222222222222222222")
 const salt = randomSalt()
+const FEE = 10n ** 17n
 
 const token: DeployInput = { key: "token", params: { name: "My Token", symbol: "MYT", initialSupply: 10n ** 24n, recipient: me } }
 const nft: DeployInput = {
@@ -40,16 +41,21 @@ const tipJar: DeployInput = { key: "tipJar", params: { recipient: me, title: "Co
 describe("deploy calls", () => {
   it("encode against each factory ABI", () => {
     for (const input of [token, nft, tipJar]) {
-      expect(() => encodeFunctionData(deployCall(factory, input, salt))).not.toThrow()
+      expect(() => encodeFunctionData(deployCall(factory, input, salt, FEE))).not.toThrow()
       expect(() => encodeFunctionData(predictCall(factory, me, input, salt))).not.toThrow()
     }
   })
 
   it("predicts with the deployer first, then the deploy arguments", () => {
-    const deploy = deployCall(factory, token, salt)
+    const deploy = deployCall(factory, token, salt, FEE)
     const predict = predictCall(factory, me, token, salt)
     expect(predict.functionName).toBe("predictAddress")
     expect(predict.args).toEqual([me, ...deploy.args])
+  })
+
+  it("sends exactly the factory's fee with every deploy", () => {
+    for (const input of [token, nft, tipJar]) expect(deployCall(factory, input, salt, FEE).value).toBe(FEE)
+    expect(deployCall(factory, token, salt, 0n).value).toBe(0n)
   })
 
   it("makes a fresh 32-byte salt each time", () => {
@@ -61,7 +67,7 @@ describe("deploy calls", () => {
 
 describe("constructor arguments", () => {
   it("token", () => {
-    const args = constructorArgsFor("uzo.token", encodeFunctionData(deployCall(factory, token, salt)))
+    const args = constructorArgsFor("uzo.token", encodeFunctionData(deployCall(factory, token, salt, FEE)))
     expect(decodeAbiParameters(parseAbiParameters("string, string, uint256, address"), `0x${args}`)).toEqual([
       "My Token",
       "MYT",
@@ -71,13 +77,13 @@ describe("constructor arguments", () => {
   })
 
   it("nft", () => {
-    const args = constructorArgsFor("uzo.nft", encodeFunctionData(deployCall(factory, nft, salt)))
+    const args = constructorArgsFor("uzo.nft", encodeFunctionData(deployCall(factory, nft, salt, FEE)))
     const types = parseAbiParameters("string, string, string, uint256, address, address, uint96")
     expect(decodeAbiParameters(types, `0x${args}`)).toEqual(["C", "C", "ipfs://x/", 1000n, me, me, 500n])
   })
 
   it("tip jar includes the factory's USDT and needs it", () => {
-    const data = encodeFunctionData(deployCall(factory, tipJar, salt))
+    const data = encodeFunctionData(deployCall(factory, tipJar, salt, FEE))
     expect(() => constructorArgsFor("uzo.tipjar", data)).toThrow()
     const args = constructorArgsFor("uzo.tipjar", data, usdt)
     expect(decodeAbiParameters(parseAbiParameters("address, address, string"), `0x${args}`)).toEqual([me, usdt, "Coffee"])

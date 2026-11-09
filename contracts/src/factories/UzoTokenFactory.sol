@@ -2,13 +2,20 @@
 pragma solidity 0.8.28;
 
 import {Create2} from "@openzeppelin/contracts/utils/Create2.sol";
+import {UzoFee} from "./UzoFee.sol";
 import {UzoToken, UZO_TOKEN_ID, UZO_TOKEN_VERSION} from "../templates/UzoToken.sol";
 
 /// @title UzoTokenFactory
-/// @notice Deploys UzoToken contracts with CREATE2. It has no owner, no fees and no state.
+/// @notice Deploys UzoToken contracts with CREATE2. It has no owner and no state beyond its fee,
+/// fixed at deployment (see UzoFee).
 /// The salt includes the caller, so nobody can take another person's address.
 /// @dev Tested, not audited.
-contract UzoTokenFactory {
+contract UzoTokenFactory is UzoFee {
+    /// @notice Creates the factory.
+    /// @param fee_ Native amount every deploy must send, in wei.
+    /// @param feeRecipient_ Receives every fee. Must not be the zero address.
+    constructor(uint256 fee_, address feeRecipient_) UzoFee(fee_, feeRecipient_) {}
+
     /// @notice A new instance was deployed.
     /// @param deployer Who called `deploy`.
     /// @param instance The new contract.
@@ -21,7 +28,7 @@ contract UzoTokenFactory {
         uint16 version
     );
 
-    /// @notice Deploys a new UzoToken. The whole supply goes to `recipient`.
+    /// @notice Deploys a new UzoToken. The whole supply goes to `recipient`. Send exactly `fee`.
     /// @param userSalt Any value. Combined with the caller to make the CREATE2 salt.
     /// @param name Token name.
     /// @param symbol Token symbol.
@@ -34,13 +41,15 @@ contract UzoTokenFactory {
         string calldata symbol,
         uint256 initialSupply,
         address recipient
-    ) external returns (address instance) {
+    ) external payable returns (address instance) {
+        _checkFee();
         instance = address(
             new UzoToken{salt: _salt(msg.sender, userSalt)}(name, symbol, initialSupply, recipient)
         );
-        // The only external call is our own template constructor, so the order is safe.
+        // The template constructor is our own code, and the fee is paid last, so the order is safe.
         // forge-lint: disable-next-line(reentrancy-events)
         emit Deployed(msg.sender, instance, UZO_TOKEN_ID, UZO_TOKEN_VERSION);
+        _payFee();
     }
 
     /// @notice The address `deploy` would return for these inputs.
