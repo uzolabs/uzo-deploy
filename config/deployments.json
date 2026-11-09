@@ -11,25 +11,25 @@
       "factories": {
         "token": {
           "contract": "UzoTokenFactory",
-          "address": "0x37370F4504d0703c40c90E31bEB536CD1D772c7e",
-          "deployBlock": 25930594,
-          "txHash": "0x0421b5eec6d97c9653ad0ceee410d287ecb3757078c1ce7755bccc68e5e50e65",
+          "address": "0x9D66023a9ab4a062701f0432156a3AC2Fb7964F6",
+          "deployBlock": 29861516,
+          "txHash": "0x95d8444baeee3639045b6168a8c0b450348dd24c2c9e03e44e529d2a64baa9de",
           "templateId": "uzo.token",
           "version": 1
         },
         "nft": {
           "contract": "UzoNFTFactory",
-          "address": "0xd41186A5c7414d4AA0E306bfD59d70CAc0ABCD78",
-          "deployBlock": 25930595,
-          "txHash": "0x0d59126ad5631a06771e9c97bb7e09b14023d1227e370251e34dc4945672d6b5",
+          "address": "0xaF987D1BaEaAAcfD74b347618119AdeC04a21814",
+          "deployBlock": 29861516,
+          "txHash": "0x0f7d5d88ab1a80ded442ac8fe25e98f5fb03b2c17f983a033d8653216f85c165",
           "templateId": "uzo.nft",
           "version": 1
         },
         "tipJar": {
           "contract": "UzoTipJarFactory",
-          "address": "0xfd947C6d9e521b51377652040D239781BEE5775a",
-          "deployBlock": 25930595,
-          "txHash": "0x139afb1a24cdd7266a28dc3dc73e4e5046ea977d83415e9e8bd9aef4144ef29d",
+          "address": "0x95cB60ad9cB39fCF9085250F9A49BD8B04753a9C",
+          "deployBlock": 29861516,
+          "txHash": "0x66fc1ee0ffb6e570904e833abf9c25dc70e075069d946d6dfd98497ab6859173",
           "templateId": "uzo.tipjar",
           "version": 1
         }
