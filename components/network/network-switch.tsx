@@ -5,11 +5,11 @@ import type { NetworkKey } from "@/lib/chains"
 import { cn } from "@/lib/utils"
 
 const options: { key: NetworkKey; label: string }[] = [
-  { key: "testnet", label: "Testnet" },
   { key: "mainnet", label: "Mainnet" },
+  { key: "testnet", label: "Testnet" },
 ]
 
-/** Testnet / Mainnet toggle. Shown on every page. */
+/** Mainnet / Testnet toggle. Shown on every page. */
 export function NetworkSwitch({ className }: { className?: string }) {
   const { network, setNetwork } = useNetwork()
   return (

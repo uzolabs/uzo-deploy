@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/page-header"
 import { TipForm } from "@/components/tip/tip-form"
 import { Button } from "@/components/ui/button"
 import { uzoTipJarAbi } from "@/lib/abi/generated"
-import { explorerAddress, networks } from "@/lib/chains"
+import { defaultNetwork, explorerAddress, networks } from "@/lib/chains"
 import { publicClient } from "@/lib/server/client"
 import { findInstance, networkParam } from "@/lib/server/lookup"
 import { WalletSection } from "@/components/wallet/wallet-gate"
@@ -24,7 +24,7 @@ export default async function TipPage({ params, searchParams }: PageProps<"/tip/
   const found = address ? await findInstance(address, requested) : {}
 
   if (!address || !found.network || found.deployment.templateId !== "uzo.tipjar") {
-    const chain = networks[requested ?? "testnet"]
+    const chain = networks[requested ?? defaultNetwork]
     return (
       <PageHeader
         eyebrow="Tip"

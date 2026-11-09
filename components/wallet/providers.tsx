@@ -39,8 +39,8 @@ const config =
         appUrl: site.url,
         appDescription: site.description,
         projectId,
-        // Testnet first, so a fresh connection lands there.
-        chains: [botChainTestnet, botChain],
+        // Mainnet first, so a fresh connection lands there.
+        chains: [botChain, botChainTestnet],
         transports: {
           [botChainTestnet.id]: http(rpcUrl(botChainTestnet)),
           [botChain.id]: http(rpcUrl(botChain)),

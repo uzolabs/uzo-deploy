@@ -54,10 +54,10 @@ export default function HomePage() {
         </div>
       </PageHeader>
 
-      <Section id="status" eyebrow="Network" title="Try it on testnet first">
+      <Section id="status" eyebrow="Network" title="Live on mainnet">
         <p className="mb-6 max-w-2xl text-muted-foreground">
-          New visitors start on testnet, where gas is free from the faucet. Switch to mainnet from the menu when you
-          are ready.
+          Uzo Deploy starts on BOT Chain mainnet. Want to practise first? Switch to testnet from the menu, where gas
+          is free from the faucet.
         </p>
         <NetworkStatus />
       </Section>

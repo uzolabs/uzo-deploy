@@ -22,7 +22,7 @@ function readStored(): NetworkKey | null {
   }
 }
 
-/** The selected network. New visitors get testnet; the choice is remembered in this browser only. */
+/** The selected network. New visitors get mainnet (testnet in end-to-end tests); the choice is remembered in this browser only. */
 export function NetworkProvider({ children }: { children: ReactNode }) {
   const [network, setState] = useState<NetworkKey>(defaultNetwork)
 

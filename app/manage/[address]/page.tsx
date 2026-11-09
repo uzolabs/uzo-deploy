@@ -5,7 +5,7 @@ import { ManagePanel } from "@/components/manage/manage-panel"
 import { PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import { templateById } from "@/config/templates"
-import { explorerAddress, networks, otherNetwork } from "@/lib/chains"
+import { defaultNetwork, explorerAddress, networks, otherNetwork } from "@/lib/chains"
 import { shortAddress } from "@/lib/format"
 import { findInstance, networkParam } from "@/lib/server/lookup"
 import { WalletSection } from "@/components/wallet/wallet-gate"
@@ -33,7 +33,7 @@ export default async function ManagePage({ params, searchParams }: PageProps<"/m
   const found = await findInstance(address, requested)
 
   if (!found.network) {
-    const network = requested ?? "testnet"
+    const network = requested ?? defaultNetwork
     return (
       <PageHeader
         eyebrow="Manage"

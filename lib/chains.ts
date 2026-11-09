@@ -11,8 +11,11 @@ export const networks = {
   mainnet: botChain,
 } as const satisfies Record<NetworkKey, BotChain>
 
-/** New visitors start on testnet. Mainnet is a deliberate choice. */
-export const defaultNetwork: NetworkKey = "testnet"
+/**
+ * New visitors start on mainnet and can switch to testnet from the menu. End-to-end tests point
+ * testnet at a local fork (NEXT_PUBLIC_TESTNET_RPC_URL), so they start on testnet and never touch mainnet.
+ */
+export const defaultNetwork: NetworkKey = process.env.NEXT_PUBLIC_TESTNET_RPC_URL ? "testnet" : "mainnet"
 
 export function chainFor(network: NetworkKey): BotChain {
   return networks[network]

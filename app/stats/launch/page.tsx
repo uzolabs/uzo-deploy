@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { connection } from "next/server"
 import { PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
-import { explorerAddress, explorerTx, networks, type BotChain } from "@/lib/chains"
+import { defaultNetwork, explorerAddress, explorerTx, networks, type BotChain } from "@/lib/chains"
 import { shortAddress } from "@/lib/format"
 import { launch } from "@/lib/server/data"
 import { networkParam } from "@/lib/server/lookup"
@@ -33,7 +33,7 @@ const when = (seconds: number) =>
 export default async function LaunchPage({ searchParams }: PageProps<"/stats/launch">) {
   await connection()
   const query = await searchParams
-  const network = networkParam(query.network) ?? "testnet"
+  const network = networkParam(query.network) ?? defaultNetwork
   const chain = networks[network]
   const since = parseSince(query.since)
   const report = await launch(chain, since).catch(() => undefined)
@@ -62,8 +62,8 @@ export default async function LaunchPage({ searchParams }: PageProps<"/stats/lau
               defaultValue={network}
               className="h-11 rounded-xl border border-glass-border bg-foreground/5 px-3 text-base"
             >
-              <option value="testnet">Testnet</option>
               <option value="mainnet">Mainnet</option>
+              <option value="testnet">Testnet</option>
             </select>
           </label>
           <Button type="submit" variant="outline" className="h-11 rounded-full">
