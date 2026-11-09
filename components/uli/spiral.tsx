@@ -1,6 +1,3 @@
-"use client"
-
-import { motion, useReducedMotion } from "framer-motion"
 import { arc, crescent, spiral, tail, zigzag } from "@/lib/uli"
 import { cn } from "@/lib/utils"
 
@@ -55,42 +52,37 @@ const toneClass = {
   accent: "text-accent",
 } as const
 
+/** Draws itself on load with CSS (`.draw-in`, `.dot-in`); reduced motion shows it finished. */
 export function HeroSpiral({ className }: { className?: string }) {
-  const reduce = useReducedMotion()
-
   return (
     <svg viewBox="0 0 800 800" fill="none" aria-hidden="true" className={cn("overflow-visible", className)}>
       {heroStrokes.map((s, i) => (
-        <motion.path
+        <path
           key={i}
           d={s.d}
-          className={toneClass[s.tone]}
+          pathLength={1}
+          className={cn("draw-in", toneClass[s.tone])}
           stroke="currentColor"
           strokeWidth={1.4}
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ opacity: s.opacity }}
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={
-            reduce
-              ? { duration: 0 }
-              : { duration: i === 0 ? 2.4 : 1.6, delay: s.delay, ease: [0.65, 0, 0.35, 1] }
-          }
+          style={{
+            opacity: s.opacity,
+            animationDuration: `${i === 0 ? 2.4 : 1.6}s`,
+            animationDelay: `${s.delay}s`,
+          }}
         />
       ))}
       {heroDots.map((p, i) => (
-        <motion.circle
+        <circle
           key={i}
           cx={p.cx}
           cy={p.cy}
           r={2.5}
-          className="text-foreground"
+          className="dot-in text-foreground"
           stroke="currentColor"
           strokeWidth={1.2}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.25 }}
-          transition={reduce ? { duration: 0 } : { duration: 0.4, delay: 1.4 + i * 0.08 }}
+          style={{ animationDelay: `${1.4 + i * 0.08}s` }}
         />
       ))}
     </svg>

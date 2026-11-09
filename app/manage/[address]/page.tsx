@@ -8,6 +8,7 @@ import { templateById } from "@/config/templates"
 import { explorerAddress, networks, otherNetwork } from "@/lib/chains"
 import { shortAddress } from "@/lib/format"
 import { findInstance, networkParam } from "@/lib/server/lookup"
+import { WalletSection } from "@/components/wallet/wallet-gate"
 
 export const metadata: Metadata = {
   title: "Manage",
@@ -66,7 +67,9 @@ export default async function ManagePage({ params, searchParams }: PageProps<"/m
         lede={`Deployed on ${networks[found.network].name}. Reads are live from the chain. Anything you change is signed by your own wallet.`}
       />
       <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
-        <ManagePanel network={found.network} address={address} templateId={found.deployment.templateId} />
+        <WalletSection>
+          <ManagePanel network={found.network} address={address} templateId={found.deployment.templateId} />
+        </WalletSection>
       </div>
     </>
   )

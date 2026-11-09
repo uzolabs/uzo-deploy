@@ -6,7 +6,7 @@ import { templateBySlug, templates } from "@/config/templates"
 import { isVerified } from "@/lib/botscan"
 import { botChain, botChainTestnet } from "@/lib/chains"
 import { factoryFor } from "@/lib/deployments"
-
+import { WalletSection } from "@/components/wallet/wallet-gate"
 
 export function generateStaticParams() {
   return templates.map((t) => ({ template: t.slug }))
@@ -42,7 +42,9 @@ export default async function DeployTemplatePage(props: PageProps<"/deploy/[temp
     <>
       <PageHeader eyebrow="Deploy" title={template.name} lede={template.summary} />
       <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
-        <DeployFlow template={template} verified={verified} />
+        <WalletSection>
+          <DeployFlow template={template} verified={verified} />
+        </WalletSection>
       </div>
     </>
   )

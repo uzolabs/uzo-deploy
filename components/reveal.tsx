@@ -1,7 +1,6 @@
 "use client"
 
-import { motion, useReducedMotion } from "framer-motion"
-import type { ReactNode } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 
 type RevealProps = {
   children: ReactNode
@@ -10,23 +9,47 @@ type RevealProps = {
   as?: "div" | "li"
 }
 
-export const easeOut = [0.22, 1, 0.36, 1] as const
+/**
+ * True once the element has scrolled into view. Plain IntersectionObserver, so pages
+ * don't load an animation library for a fade. The bottom margin waits until it is 10% in.
+ */
+export function useInViewOnce<T extends Element>(rootMargin = "0px 0px -10% 0px") {
+  const ref = useRef<T>(null)
+  const [seen, setSeen] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || seen) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setSeen(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [rootMargin, seen])
+
+  return [ref, seen] as const
+}
 
 /**
  * Fade and rise a short distance the first time it scrolls into view.
- * Markup is identical on server and client; reduced motion only zeroes the duration.
+ * The motion lives in CSS (`.reveal`), which also turns it off for reduced motion.
  */
 export function Reveal({ children, className, delay = 0, as = "div" }: RevealProps) {
-  const reduce = useReducedMotion()
-  const Comp = as === "li" ? motion.li : motion.div
+  const [ref, seen] = useInViewOnce<HTMLDivElement & HTMLLIElement>()
+  const Comp = as
 
   return (
     <Comp
-      className={className}
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-      transition={reduce ? { duration: 0 } : { duration: 0.45, delay, ease: easeOut }}
+      ref={ref}
+      className={["reveal", className].filter(Boolean).join(" ")}
+      data-shown={seen ? "" : undefined}
+      style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}
     </Comp>

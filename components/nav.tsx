@@ -2,20 +2,36 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { lazy, useState } from "react"
 import { Menu } from "lucide-react"
-import { ConnectButton } from "@rainbow-me/rainbowkit"
-import { useAccount } from "wagmi"
 import { NetworkSwitch } from "@/components/network/network-switch"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { preloadWallet, requestWallet, WalletIsland } from "@/components/wallet/wallet-gate"
 import { navLinks, site } from "@/lib/site"
 import { cn } from "@/lib/utils"
 
+const NavWallet = lazy(() => import("@/components/wallet/nav-wallet"))
+
+/** Stands in for the wallet button until the wallet code loads. A tap loads it and opens the dialog. */
+function ConnectPlaceholder() {
+  return (
+    <button
+      type="button"
+      onClick={() => requestWallet({ openConnect: true })}
+      onPointerEnter={preloadWallet}
+      onFocus={preloadWallet}
+      className="inline-flex h-10 items-center rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground hover:bg-primary/90"
+    >
+      Connect
+    </button>
+  )
+}
+
 function Wordmark() {
   return (
-    <Link href="/" className="flex items-baseline gap-1.5 rounded-full pr-2 text-foreground" aria-label="Uzo Deploy home">
-      <span className="font-display text-[1.75rem] leading-none">Uzo</span>
+    <Link href="/" className="flex items-baseline gap-1.5 rounded-full pr-2 text-foreground">
+      <span className="font-display text-[1.75rem] leading-none">Uzo</span>{" "}
       <span className="text-sm font-medium text-muted-foreground">Deploy</span>
     </Link>
   )
@@ -25,7 +41,6 @@ export function Nav() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`)
-  const { isConnected } = useAccount()
 
   return (
     <header className="sticky top-0 z-40 px-4 pt-3 sm:px-6">
@@ -33,20 +48,10 @@ export function Nav() {
         <Wordmark />
 
         <div className="flex items-center gap-2">
-          {isConnected ? (
-            <Link
-              href="/my"
-              aria-current={isActive("/my") ? "page" : undefined}
-              className={cn(
-                "hidden h-10 items-center rounded-full px-4 text-sm font-medium hover:bg-foreground/10 lg:inline-flex",
-                isActive("/my") && "bg-foreground/10 text-primary",
-              )}
-            >
-              My contracts
-            </Link>
-          ) : null}
           <NetworkSwitch className="hidden lg:inline-flex" />
-          <ConnectButton showBalance={false} chainStatus="none" accountStatus="address" label="Connect" />
+          <WalletIsland fallback={<ConnectPlaceholder />}>
+            <NavWallet myActive={isActive("/my")} />
+          </WalletIsland>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -56,7 +61,7 @@ export function Nav() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[85%] border-glass-border bg-[#12100e]/95 p-6 pt-5">
               <SheetTitle className="flex items-baseline gap-1.5">
-                <span className="font-display text-[1.75rem] leading-none">Uzo</span>
+                <span className="font-display text-[1.75rem] leading-none">Uzo</span>{" "}
                 <span className="text-sm font-medium text-muted-foreground">Deploy</span>
               </SheetTitle>
               <div className="mt-6">

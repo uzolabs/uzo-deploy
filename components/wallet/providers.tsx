@@ -3,11 +3,10 @@
 import "@rainbow-me/rainbowkit/styles.css"
 import { darkTheme, getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useState, type ReactNode } from "react"
+import type { ReactNode } from "react"
 import { isAddress } from "viem"
-import { createConfig, http, WagmiProvider } from "wagmi"
-import { mock } from "wagmi/connectors"
-import { NetworkProvider, useNetwork } from "@/components/network/network-provider"
+import { createConfig, http, mock, WagmiProvider } from "wagmi"
+import { useNetwork } from "@/components/network/network-provider"
 import { botChain, botChainTestnet, rpcUrl } from "@/lib/chains"
 import { site } from "@/lib/site"
 
@@ -66,14 +65,15 @@ function RainbowKitWithNetwork({ children }: { children: ReactNode }) {
   )
 }
 
+// One client for every wallet island, so they share cached reads.
+const queryClient = new QueryClient()
+
+/** Wallet providers. Loaded on demand through WalletIsland; NetworkProvider sits above them in the layout. */
 export function Providers({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient())
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <NetworkProvider>
-          <RainbowKitWithNetwork>{children}</RainbowKitWithNetwork>
-        </NetworkProvider>
+        <RainbowKitWithNetwork>{children}</RainbowKitWithNetwork>
       </QueryClientProvider>
     </WagmiProvider>
   )

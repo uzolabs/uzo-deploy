@@ -8,6 +8,7 @@ import { uzoTipJarAbi } from "@/lib/abi/generated"
 import { explorerAddress, networks } from "@/lib/chains"
 import { publicClient } from "@/lib/server/client"
 import { findInstance, networkParam } from "@/lib/server/lookup"
+import { WalletSection } from "@/components/wallet/wallet-gate"
 
 export const metadata: Metadata = {
   title: "Send a tip",
@@ -58,14 +59,16 @@ export default async function TipPage({ params, searchParams }: PageProps<"/tip/
 
   return (
     <div className="mx-auto max-w-xl px-4 pt-10 pb-6 sm:px-6 sm:pt-16">
-      <TipForm
-        network={found.network}
-        jar={address}
-        title={title}
-        recipient={recipient}
-        usdt={usdt}
-        maxMessageBytes={Math.min(140, Number(maxMessageBytes))}
-      />
+      <WalletSection>
+        <TipForm
+          network={found.network}
+          jar={address}
+          title={title}
+          recipient={recipient}
+          usdt={usdt}
+          maxMessageBytes={Math.min(140, Number(maxMessageBytes))}
+        />
+      </WalletSection>
     </div>
   )
 }

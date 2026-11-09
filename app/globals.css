@@ -71,9 +71,10 @@
   color-scheme: dark;
 }
 
+/* Phones skip the blur: over the dark backdrop it barely shows, and it costs mid-range phones seconds of work. */
 @media (max-width: 640px) {
   :root {
-    --glass-blur: 12px;
+    --glass-blur: 0px;
   }
 }
 
@@ -150,8 +151,92 @@
 
 @utility animate-glow-drift {
   animation: glow-drift 40s ease-in-out infinite;
+  /* Phones skip it: every frame would re-blur each glass panel above it. */
+  @media (prefers-reduced-motion: reduce), (max-width: 640px) {
+    animation: none;
+  }
+}
+
+/* Page header entrance: a short rise. Opacity stays at 1 so it never delays the first paint. */
+@keyframes rise {
+  from {
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@utility animate-rise {
+  animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
   @media (prefers-reduced-motion: reduce) {
     animation: none;
+  }
+}
+
+/* Scroll reveals (components/reveal.tsx): hidden until data-shown is set in view. */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal[data-shown] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Roadmap line: wipes in left to right. */
+.wipe-in {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.wipe-in[data-shown] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Hero spiral strokes draw on load; each path sets pathLength="1". */
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.draw-in {
+  stroke-dasharray: 1;
+  animation: draw-in 1.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@keyframes dot-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.25;
+  }
+}
+.dot-in {
+  opacity: 0.25;
+  animation: dot-in 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .wipe-in,
+  .draw-in,
+  .dot-in {
+    transition: none;
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  .wipe-in {
+    clip-path: none;
   }
 }
 

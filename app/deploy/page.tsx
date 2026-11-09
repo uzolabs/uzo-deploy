@@ -19,7 +19,7 @@ export default function DeployPage() {
       <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
         <div className="grid gap-6 md:grid-cols-3">
           {templates.map((t) => (
-            <TemplateCard key={t.key} template={t} />
+            <TemplateCard key={t.key} template={t} headingLevel={2} />
           ))}
         </div>
       </div>

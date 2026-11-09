@@ -1,7 +1,6 @@
 "use client"
 
-import { motion, useReducedMotion } from "framer-motion"
-import { easeOut } from "@/components/reveal"
+import { useInViewOnce } from "@/components/reveal"
 import { cn } from "@/lib/utils"
 
 // Nodes sit at the centre of four equal columns in a 1200 wide box: 12.5%, 37.5%, 62.5%, 87.5%.
@@ -26,16 +25,14 @@ const echo = wave(0, 34)
 
 /** Horizontal Uli line for the desktop roadmap. Draws left to right once. */
 export function PathLineHorizontal({ className }: { className?: string }) {
-  const reduce = useReducedMotion()
+  const [ref, seen] = useInViewOnce<HTMLDivElement>("0px 0px -15% 0px")
 
   return (
-    <motion.div
+    <div
+      ref={ref}
       aria-hidden="true"
-      className={cn("pointer-events-none", className)}
-      initial={{ clipPath: "inset(0 100% 0 0)" }}
-      whileInView={{ clipPath: "inset(0 0% 0 0)" }}
-      viewport={{ once: true, margin: "0px 0px -15% 0px" }}
-      transition={reduce ? { duration: 0 } : { duration: 1.4, ease: easeOut }}
+      className={cn("wipe-in pointer-events-none", className)}
+      data-shown={seen ? "" : undefined}
     >
       <svg viewBox="0 0 1200 120" preserveAspectRatio="none" fill="none" className="h-full w-full">
         <path
@@ -56,7 +53,7 @@ export function PathLineHorizontal({ className }: { className?: string }) {
           className="text-foreground/25"
         />
       </svg>
-    </motion.div>
+    </div>
   )
 }
 

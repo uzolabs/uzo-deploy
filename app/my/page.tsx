@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { MyDeployments } from "@/components/my/my-deployments"
 import { PageHeader } from "@/components/page-header"
+import { WalletSection } from "@/components/wallet/wallet-gate"
 
 export const metadata: Metadata = {
   title: "My contracts",
@@ -17,7 +18,9 @@ export default function MyPage() {
         lede="Every contract your connected wallet created through the Uzo factories on the selected network."
       />
       <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
-        <MyDeployments />
+        <WalletSection>
+          <MyDeployments />
+        </WalletSection>
       </div>
     </>
   )

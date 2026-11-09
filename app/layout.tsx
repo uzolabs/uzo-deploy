@@ -5,9 +5,10 @@ import { Background } from "@/components/background"
 import { Footer } from "@/components/footer"
 import { Nav } from "@/components/nav"
 import { NetworkBanner } from "@/components/network/network-banner"
+import { NetworkProvider } from "@/components/network/network-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { Providers } from "@/components/wallet/providers"
+import { WalletAutoload } from "@/components/wallet/wallet-gate"
 import { site } from "@/lib/site"
 import "./globals.css"
 
@@ -83,7 +84,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organization).replace(/</g, "\\u003c") }}
         />
         <Background />
-        <Providers>
+        <NetworkProvider>
+          <WalletAutoload />
           <TooltipProvider delayDuration={200}>
             <a
               href="#main"
@@ -96,7 +98,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <main id="main">{children}</main>
             <Footer />
           </TooltipProvider>
-        </Providers>
+        </NetworkProvider>
         <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>

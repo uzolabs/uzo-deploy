@@ -9,14 +9,15 @@ import { isAvailable } from "@/lib/deployments"
 import { cn } from "@/lib/utils"
 
 /** One template in the gallery: purpose, whether it holds funds, its risk and where it is available. */
-export function TemplateCard({ template }: { template: Template }) {
+export function TemplateCard({ template, headingLevel = 3 }: { template: Template; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 2 ? "h2" : "h3"
   const { chain, network } = useNetwork()
   const available = isAvailable(chain.id, template.key)
 
   return (
     <article className="glass flex h-full flex-col rounded-3xl p-6">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-display text-2xl leading-tight">{template.name}</h3>
+        <Heading className="font-display text-2xl leading-tight">{template.name}</Heading>
         <span className="font-mono text-xs text-muted-foreground">v{template.version}</span>
       </div>
       <p className="mt-3 text-muted-foreground">{template.summary}</p>
@@ -33,7 +34,7 @@ export function TemplateCard({ template }: { template: Template }) {
               variant="outline"
               className={cn(
                 "h-5 rounded-full px-2 text-xs",
-                template.risk.level === "Low" ? "border-primary/50 text-primary" : "border-accent/60 text-accent",
+                template.risk.level === "Low" ? "border-primary/50 text-primary" : "border-accent/60 text-destructive",
               )}
             >
               {template.risk.level}
