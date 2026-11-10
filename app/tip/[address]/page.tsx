@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { getAddress, isAddress } from "viem"
+import { DeployYourOwn } from "@/components/deploy-your-own"
 import { PageHeader } from "@/components/page-header"
 import { TipForm } from "@/components/tip/tip-form"
 import { Button } from "@/components/ui/button"
@@ -69,6 +70,7 @@ export default async function TipPage({ params, searchParams }: PageProps<"/tip/
           maxMessageBytes={Math.min(140, Number(maxMessageBytes))}
         />
       </WalletSection>
+      <DeployYourOwn templateId={found.deployment.templateId} />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { getAddress, isAddress } from "viem"
 import { ManagePanel } from "@/components/manage/manage-panel"
+import { DeployYourOwn } from "@/components/deploy-your-own"
 import { PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import { templateById } from "@/config/templates"
@@ -71,6 +72,7 @@ export default async function ManagePage({ params, searchParams }: PageProps<"/m
           <ManagePanel network={found.network} address={address} templateId={found.deployment.templateId} />
         </WalletSection>
       </div>
+      <DeployYourOwn templateId={found.deployment.templateId} />
     </>
   )
 }
