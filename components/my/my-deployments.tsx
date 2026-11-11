@@ -137,7 +137,7 @@ function ContractCard({ deployment: d }: { deployment: Deployment }) {
     // The title link covers the whole card; the BOTScan links sit above it.
     <li className="glass relative grid content-start gap-3 rounded-3xl p-6 transition-colors focus-within:ring-2 focus-within:ring-primary/40 hover:border-primary/60">
       <p className="text-sm font-medium tracking-[0.14em] text-primary uppercase">{kind}</p>
-      <h2 className="font-display text-2xl break-words">
+      <h2 className="text-2xl break-words">
         <Link href={`/manage/${d.instance}?network=${network}`} className="outline-none after:absolute after:inset-0 after:rounded-3xl">
           {title ?? shortAddress(d.instance)}
         </Link>

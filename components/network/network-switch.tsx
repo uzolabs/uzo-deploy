@@ -16,7 +16,7 @@ export function NetworkSwitch({ className }: { className?: string }) {
     <div
       role="radiogroup"
       aria-label="Network"
-      className={cn("inline-flex rounded-full border border-glass-border bg-foreground/5 p-0.5", className)}
+      className={cn("inline-flex rounded-full border border-line bg-[var(--glass)] p-0.5", className)}
     >
       {options.map((o) => {
         const active = network === o.key
@@ -31,8 +31,8 @@ export function NetworkSwitch({ className }: { className?: string }) {
               "min-h-9 rounded-full px-3 text-sm font-medium transition-colors",
               active
                 ? o.key === "mainnet"
-                  ? "bg-accent text-accent-foreground"
-                  : "bg-primary text-primary-foreground"
+                  ? "bg-ember/15 text-[#ffb7a6] ring-1 ring-ember/60 ring-inset"
+                  : "bg-gold/15 text-ochre-hi ring-1 ring-gold/50 ring-inset"
                 : "text-muted-foreground hover:text-foreground",
             )}
           >

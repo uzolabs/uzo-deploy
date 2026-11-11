@@ -122,7 +122,7 @@ export function TipForm({ network, jar, title, recipient, usdt, maxMessageBytes 
     <div className="grid gap-6">
       <header className="grid gap-3">
         <p className="text-sm font-medium tracking-[0.14em] text-primary uppercase">Send a tip</p>
-        <h1 className="font-display text-[2rem] leading-tight text-balance break-words sm:text-[2.5rem]">{title}</h1>
+        <h1 className="text-[2rem] leading-tight text-balance break-words sm:text-[2.5rem]">{title}</h1>
         <p className="flex flex-wrap items-center gap-2 text-muted-foreground">
           Goes to <Addr chain={chain} value={recipient} />
         </p>
@@ -133,7 +133,7 @@ export function TipForm({ network, jar, title, recipient, usdt, maxMessageBytes 
 
       {sent ? (
         <section className="glass grid gap-4 rounded-3xl p-6" aria-live="polite">
-          <p className="flex items-center gap-2 font-display text-2xl">
+          <p className="flex items-center gap-2 text-2xl">
             <CheckCircle2 className="size-6 text-primary" aria-hidden="true" /> Tip sent
           </p>
           <p>

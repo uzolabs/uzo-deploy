@@ -36,3 +36,6 @@ contracts/foundry-pp/
 /test-results/
 /playwright-report/
 /.next-e2e/
+
+# Blender renders (only the webp in public/img/3d is kept)
+/art/out/

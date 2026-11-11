@@ -73,7 +73,7 @@ export function VerifyStep({ template, input, instance, txHash }: Props) {
   return (
     <div className="mx-auto grid max-w-2xl gap-6">
       <section className="glass grid gap-4 rounded-3xl p-6 sm:p-8" aria-live="polite">
-        <h2 className="font-display text-2xl">Your {template.name.toLowerCase()} is live</h2>
+        <h2 className="text-2xl">Your {template.name.toLowerCase()} is live</h2>
         <div className="flex flex-wrap items-center gap-1">
           <a href={explorerAddress(chain, instance)} target="_blank" rel="noreferrer" className="font-mono text-sm break-all underline-offset-4 hover:underline">
             {instance}

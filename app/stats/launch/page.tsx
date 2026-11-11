@@ -93,7 +93,7 @@ export default async function LaunchPage({ searchParams }: PageProps<"/stats/lau
             </dl>
 
             <section aria-labelledby="independent" className="grid gap-4">
-              <h2 id="independent" className="font-display text-2xl">
+              <h2 id="independent" className="text-2xl">
                 Independent addresses
               </h2>
               {report.independent.length === 0 ? (
@@ -108,7 +108,7 @@ export default async function LaunchPage({ searchParams }: PageProps<"/stats/lau
             </section>
 
             <section aria-labelledby="team" className="grid gap-4">
-              <h2 id="team" className="font-display text-2xl">
+              <h2 id="team" className="text-2xl">
                 Team wallets
               </h2>
               <p className="text-sm text-muted-foreground">

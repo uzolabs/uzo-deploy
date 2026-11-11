@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 import type { ReactNode } from "react"
+import { Arrow } from "@/components/brand"
 import { Reveal } from "@/components/reveal"
 import { cn } from "@/lib/utils"
 
@@ -15,21 +15,18 @@ type SectionProps = {
   className?: string
 }
 
-/** Shared section shell: anchor offset for the sticky nav, eyebrow, Reggae One title. */
+/** Shared section shell: anchor offset for the sticky nav, eyebrow pill, tight headline. */
 export function Section({ id, eyebrow, title, lede, action, children, className }: SectionProps) {
   return (
     <section id={id} aria-labelledby={`${id}-title`} className={cn("scroll-mt-24 py-20 sm:py-28", className)}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <Reveal className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-sm font-medium tracking-[0.14em] text-primary uppercase">{eyebrow}</p>
-            <h2
-              id={`${id}-title`}
-              className="mt-3 font-display text-[2.25rem] leading-[1.12] text-balance sm:text-[2.75rem] lg:text-[3rem]"
-            >
+          <div className="grid max-w-2xl justify-items-start gap-[18px]">
+            <p className="eyebrow">{eyebrow}</p>
+            <h2 id={`${id}-title`} className="text-[2rem] sm:text-[2.75rem] lg:text-[3.3rem]">
               {title}
             </h2>
-            {lede ? <p className="mt-4 text-lg text-muted-foreground">{lede}</p> : null}
+            {lede ? <p className="text-lg text-ink-2">{lede}</p> : null}
           </div>
           {action ? <MoreLink {...action} className="shrink-0" /> : null}
         </Reveal>
@@ -44,12 +41,12 @@ export function MoreLink({ href, label, className }: { href: string; label: stri
     <Link
       href={href}
       className={cn(
-        "group inline-flex items-center gap-2 self-start rounded-full py-1 font-medium text-primary underline-offset-4 hover:underline",
+        "group inline-flex items-center gap-2 self-start rounded-full py-1 font-medium text-ochre-hi underline-offset-4 hover:underline",
         className
       )}
     >
       {label}
-      <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      <Arrow />
     </Link>
   )
 }

@@ -17,6 +17,7 @@ export default function StatsPage() {
     <>
       <PageHeader
         eyebrow="Stats"
+        art="stats"
         title="Usage in numbers"
         lede="Counts read from the Uzo factories and tip jars on chain. Activity from Uzo team wallets is left out and shown separately."
       />
@@ -34,7 +35,7 @@ export default function StatsPage() {
 function Shell({ network, children }: { network: NetworkKey; children: ReactNode }) {
   return (
     <section aria-labelledby={`stats-${network}`} className="glass grid gap-6 rounded-3xl p-6 sm:p-8">
-      <h2 id={`stats-${network}`} className="font-display text-2xl">
+      <h2 id={`stats-${network}`} className="text-2xl">
         {networks[network].name}
       </h2>
       {children}

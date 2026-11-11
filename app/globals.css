@@ -7,10 +7,17 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
-  --font-display: var(--font-reggae), var(--font-satoshi), serif;
-  --font-heading: var(--font-reggae), var(--font-satoshi), serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --color-ink-2: var(--ink-2);
+  --color-gold: var(--gold);
+  --color-ember: var(--ember);
+  --color-ochre-hi: var(--ochre-hi);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -39,8 +46,8 @@
 }
 
 /*
- * Uli palette. Dark only for now.
- * uli black, nzu white chalk, edo ochre, ufie camwood red.
+ * The Uzo Labs dark glass look, shared with uzolabs.xyz.
+ * Uli black, nzu white chalk, edo ochre and ufie camwood red.
  */
 :root {
   --background: #0b0a09;
@@ -63,10 +70,20 @@
   --ring: #d9a441;
   --radius: 0.625rem;
 
-  --glass: rgba(245, 241, 234, 0.06);
-  --glass-strong: rgba(245, 241, 234, 0.09);
-  --glass-border: rgba(245, 241, 234, 0.12);
-  --glass-blur: 24px;
+  --ink-2: #cfc7ba;
+  --gold: #d9a441;
+  --ember: #e0674f;
+  --camwood: #b23a2a;
+  --ochre-hi: #f3d48f;
+  --grad: linear-gradient(120deg, var(--ochre-hi), var(--gold) 45%, var(--ember));
+  --glow: 0 0 0 1px rgba(217, 164, 65, 0.25), 0 10px 40px -8px rgba(217, 164, 65, 0.45);
+  --line: rgba(245, 241, 234, 0.09);
+  --line-2: rgba(245, 241, 234, 0.16);
+
+  --glass: rgba(245, 241, 234, 0.045);
+  --glass-strong: rgba(245, 241, 234, 0.07);
+  --glass-border: rgba(245, 241, 234, 0.1);
+  --glass-blur: 22px;
 
   color-scheme: dark;
 }
@@ -85,6 +102,7 @@
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    scroll-padding-top: 96px;
     -webkit-text-size-adjust: 100%;
   }
   body {
@@ -105,6 +123,17 @@
     outline: 2px solid var(--ring);
     outline-offset: 3px;
   }
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+  h1 {
+    letter-spacing: -0.045em;
+  }
   ::selection {
     background: rgba(217, 164, 65, 0.35);
     color: var(--foreground);
@@ -118,13 +147,13 @@
 
 /* Glass panel: fill, 1px border, soft top highlight, soft shadow. */
 @utility glass {
-  background-color: var(--glass);
+  background: linear-gradient(160deg, rgba(245, 241, 234, 0.075), rgba(245, 241, 234, 0.02) 55%);
   border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(150%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(150%);
   box-shadow:
-    inset 0 1px 0 0 rgba(245, 241, 234, 0.1),
-    0 12px 40px -16px rgba(0, 0, 0, 0.7);
+    inset 0 1px 0 rgba(245, 241, 234, 0.08),
+    0 30px 60px -30px rgba(0, 0, 0, 0.7);
 }
 
 /* Denser fill for panels that carry small text (code, tables). */
@@ -138,23 +167,129 @@
     0 12px 40px -16px rgba(0, 0, 0, 0.7);
 }
 
-/* The one slow looping motion on the page: background glows drifting. */
-@keyframes glow-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
+/* The light behind the glass: two soft pools and a faint grid, fixed to the window. */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 50vw at 85% -10%, rgba(224, 103, 79, 0.16), transparent 60%),
+    radial-gradient(55vw 45vw at -10% 20%, rgba(217, 164, 65, 0.13), transparent 60%),
+    radial-gradient(70vw 50vw at 50% 120%, rgba(217, 164, 65, 0.08), transparent 60%),
+    var(--background);
+}
+.sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(245, 241, 234, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 241, 234, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 0%, transparent 70%);
+}
+
+/* The Uzo mark, filled with the ochre to ember gradient. */
+.mark {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  background: var(--grad);
+  -webkit-mask: url(/img/mark.svg) center / contain no-repeat;
+  mask: url(/img/mark.svg) center / contain no-repeat;
+}
+
+/* Gradient words inside a heading. */
+@utility text-grad {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The main call to action: gradient pill with a warm glow. */
+@utility btn-grad {
+  background: var(--grad);
+  color: #0b0a09;
+  box-shadow: var(--glow);
+  transition:
+    transform 0.35s var(--ease-out-soft),
+    box-shadow 0.35s var(--ease-out-soft);
+  &:hover {
+    box-shadow:
+      0 0 0 1px rgba(217, 164, 65, 0.4),
+      0 14px 50px -6px rgba(224, 103, 79, 0.55);
   }
-  50% {
-    transform: translate3d(3%, -2%, 0) scale(1.06);
+  &:active {
+    transform: scale(0.97);
   }
 }
 
-@utility animate-glow-drift {
-  animation: glow-drift 40s ease-in-out infinite;
-  /* Phones skip it: every frame would re-blur each glass panel above it. */
-  @media (prefers-reduced-motion: reduce), (max-width: 640px) {
-    animation: none;
+/* Small pill above a heading, with a glowing gold dot. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  color: var(--ink-2);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+/* Glass art: a soft gold glow behind, the piece floating slowly. */
+.art-glow {
+  position: relative;
+}
+.art-glow::before {
+  content: "";
+  position: absolute;
+  inset: 15%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 164, 65, 0.28), transparent 70%);
+  filter: blur(36px);
+}
+.art-glow img {
+  position: relative;
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
   }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.float {
+  animation: float 9s ease-in-out infinite;
+}
+
+/* The site name, huge and fading, at the foot of every page. */
+.footer-word {
+  font-size: clamp(4rem, 17vw, 15rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.8;
+  white-space: nowrap;
+  background: linear-gradient(180deg, rgba(245, 241, 234, 0.12), rgba(245, 241, 234, 0));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  user-select: none;
 }
 
 /* Page header entrance: a short rise. Opacity stays at 1 so it never delays the first paint. */
@@ -187,56 +322,15 @@
   transform: none;
 }
 
-/* Roadmap line: wipes in left to right. */
-.wipe-in {
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.wipe-in[data-shown] {
-  clip-path: inset(0 0 0 0);
-}
-
-/* Hero spiral strokes draw on load; each path sets pathLength="1". */
-@keyframes draw-in {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.draw-in {
-  stroke-dasharray: 1;
-  animation: draw-in 1.6s cubic-bezier(0.65, 0, 0.35, 1) both;
-}
-
-@keyframes dot-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 0.25;
-  }
-}
-.dot-in {
-  opacity: 0.25;
-  animation: dot-in 0.4s ease-out both;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .reveal,
-  .wipe-in,
-  .draw-in,
-  .dot-in {
+  .float {
     transition: none;
     animation: none;
   }
   .reveal {
     opacity: 1;
     transform: none;
-  }
-  .wipe-in {
-    clip-path: none;
   }
 }
 

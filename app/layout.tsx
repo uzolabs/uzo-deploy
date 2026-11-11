@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { JetBrains_Mono, Reggae_One } from "next/font/google"
-import localFont from "next/font/local"
+import { Geist, Geist_Mono } from "next/font/google"
 import { Background } from "@/components/background"
 import { Footer } from "@/components/footer"
 import { Nav } from "@/components/nav"
@@ -12,26 +11,14 @@ import { WalletAutoload } from "@/components/wallet/wallet-gate"
 import { site } from "@/lib/site"
 import "./globals.css"
 
-const satoshi = localFont({
-  variable: "--font-satoshi",
-  display: "swap",
-  src: [
-    { path: "../public/fonts/Satoshi-Regular.woff2", weight: "400", style: "normal" },
-    { path: "../public/fonts/Satoshi-Italic.woff2", weight: "400", style: "italic" },
-    { path: "../public/fonts/Satoshi-Medium.woff2", weight: "500", style: "normal" },
-    { path: "../public/fonts/Satoshi-Bold.woff2", weight: "700", style: "normal" },
-  ],
-})
-
-const reggae = Reggae_One({
-  variable: "--font-reggae",
-  weight: "400",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
   display: "swap",
 })
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
 })
@@ -75,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`dark ${satoshi.variable} ${reggae.variable} ${jetbrains.variable} antialiased`}
+      className={`dark ${geist.variable} ${geistMono.variable} antialiased`}
     >
       {/* Extensions like Grammarly add attributes to body before React loads. */}
       <body className="min-h-dvh" suppressHydrationWarning>

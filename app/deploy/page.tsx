@@ -13,6 +13,7 @@ export default function DeployPage() {
     <>
       <PageHeader
         eyebrow="Templates"
+        art="deploy"
         title="Pick a template"
         lede="Each one is a fixed, tested contract. You fill in a few fields, check the details, and sign one transaction."
       />

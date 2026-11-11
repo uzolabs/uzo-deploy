@@ -55,6 +55,13 @@ const theme = darkTheme({
   fontStack: "system",
   overlayBlur: "small",
 })
+// Match the site's warm dark glass surfaces.
+theme.colors.modalBackground = "#12100e"
+theme.colors.modalBorder = "rgba(245, 241, 234, 0.09)"
+theme.colors.generalBorder = "rgba(245, 241, 234, 0.09)"
+theme.colors.connectButtonBackground = "#12100e"
+theme.colors.modalText = "#f5f1ea"
+theme.colors.modalTextSecondary = "#a8a095"
 
 function RainbowKitWithNetwork({ children }: { children: ReactNode }) {
   const { chain } = useNetwork()

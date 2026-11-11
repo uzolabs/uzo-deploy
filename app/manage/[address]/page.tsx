@@ -64,6 +64,7 @@ export default async function ManagePage({ params, searchParams }: PageProps<"/m
     <>
       <PageHeader
         eyebrow={`Manage ${template?.name.toLowerCase() ?? "contract"}`}
+        art="manage"
         title={template?.name ?? "Contract"}
         lede={`Deployed on ${networks[found.network].name}. Reads are live from the chain. Anything you change is signed by your own wallet.`}
       />

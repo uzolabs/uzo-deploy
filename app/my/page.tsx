@@ -14,6 +14,7 @@ export default function MyPage() {
     <>
       <PageHeader
         eyebrow="My contracts"
+        art="manage"
         title="What you deployed"
         lede="Every contract your connected wallet created through the Uzo factories on the selected network."
       />
