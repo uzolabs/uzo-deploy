@@ -1,22 +1,6 @@
 import Link from "next/link"
 import { Arrow, Art, Logo } from "@/components/brand"
-import { TelegramIcon, XIcon } from "@/components/brand-icons"
-import { navLinks, site } from "@/lib/site"
-
-const pages = [{ label: "Home", href: "/" }, ...navLinks]
-
-const external = [
-  { label: "Docs", href: site.links.docs },
-  { label: "GitHub", href: site.links.github },
-  { label: "Uzo Labs", href: site.links.home },
-  { label: "Testnet faucet", href: site.links.faucet },
-]
-
-const community = [
-  { label: "Telegram channel", href: site.links.telegramChannel, Icon: TelegramIcon },
-  { label: "Telegram community", href: site.links.telegramCommunity, Icon: TelegramIcon },
-  { label: "X", href: site.links.x, Icon: XIcon },
-]
+import { footerColumns, site } from "@/lib/site"
 
 const linkClass = "rounded-sm text-ink-2 underline-offset-4 transition-colors hover:text-ochre-hi"
 const headClass = "font-mono text-xs font-normal tracking-[0.08em] text-muted-foreground uppercase"
@@ -40,7 +24,7 @@ export function Footer() {
               Deploy your first contract <span className="text-grad">on BOT Chain</span>
             </h2>
             <p className="max-w-md text-lg text-ink-2">
-              Pick a template, fill in a short form and sign once. Try it free on testnet first.
+              Practice on testnet with free tBOT. On mainnet a deploy costs gas plus a 0.1 BOT fee.
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Link
@@ -56,7 +40,7 @@ export function Footer() {
                 rel="noreferrer"
                 className="inline-flex min-h-12 items-center rounded-full border border-line-2 bg-[var(--glass)] px-[22px] text-[0.95rem] font-semibold backdrop-blur-[14px] transition-colors hover:bg-[var(--glass-strong)]"
               >
-                Get free testnet BOT
+                Get free tBOT
               </a>
             </div>
           </div>
@@ -65,84 +49,53 @@ export function Footer() {
           </div>
         </section>
 
-        <div className="mt-20 grid gap-10 sm:grid-cols-2 md:grid-cols-[1.6fr_repeat(3,1fr)]">
-          <div className="grid content-start gap-4 sm:col-span-2 md:col-span-1">
+        <div className="mt-20 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-[1.4fr_repeat(5,1fr)] lg:gap-8">
+          <div className="col-span-full grid content-start gap-4 lg:col-span-1">
             <Link href="/" className="w-fit rounded-full" aria-label={`${site.name} home`}>
               <Logo />
             </Link>
-            <p className="max-w-sm text-sm text-muted-foreground">
-              Templates are tested, not audited. Each deploy pays a fixed 0.1 BOT fee. Uzo holds no funds and keeps
-              no admin keys over what you deploy.
+            <p className="max-w-[22rem] text-sm text-muted-foreground">
+              Tested contract templates for BOT Chain, deployed from your own wallet. No custody, no admin keys.
+              Built in Lagos.
             </p>
           </div>
 
-          <nav aria-labelledby="footer-site">
-            <h2 id="footer-site" className={headClass}>
-              Site
-            </h2>
-            <ul className="mt-4 grid gap-3 text-sm">
-              {pages.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className={linkClass}>
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-labelledby="footer-elsewhere">
-            <h2 id="footer-elsewhere" className={headClass}>
-              Elsewhere
-            </h2>
-            <ul className="mt-4 grid gap-3 text-sm">
-              {external.map((link) => (
-                <li key={link.label}>
-                  <a href={link.href} target="_blank" rel="noreferrer" className={linkClass}>
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-labelledby="footer-community">
-            <h2 id="footer-community" className={headClass}>
-              Community
-            </h2>
-            <ul className="mt-4 grid gap-3 text-sm">
-              {community.map(({ label, href, Icon }) => (
-                <li key={label}>
-                  <a href={href} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
-                    <Icon className="size-4 shrink-0" />
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {footerColumns.map((column) => (
+            <nav key={column.title} aria-label={column.title}>
+              <h2 className={headClass}>{column.title}</h2>
+              <ul className="mt-4 grid gap-2.5 text-sm">
+                {column.links
+                  .filter((link) => link.href.trim() !== "")
+                  .map((link) => (
+                    <li key={link.label}>
+                      {link.href.startsWith("/") ? (
+                        <Link href={link.href} className={linkClass}>
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          {...(link.href.startsWith("mailto:") ? {} : { target: "_blank", rel: "noreferrer" })}
+                          className={linkClass}
+                        >
+                          {link.label}
+                        </a>
+                      )}
+                    </li>
+                  ))}
+              </ul>
+            </nav>
+          ))}
         </div>
 
         <p aria-hidden="true" className="footer-word mt-14 -mb-[0.12em] text-center">
           {site.name}
         </p>
 
-        <div className="grid gap-2 border-t border-line py-8 text-sm text-muted-foreground">
-          <p>
-            Built on BOT Chain:{" "}
-            <a href={site.links.botchain} target="_blank" rel="noreferrer" className={linkClass}>
-              botchain.ai
-            </a>{" "}
-            and{" "}
-            <a href={site.links.botscan} target="_blank" rel="noreferrer" className={linkClass}>
-              scan.botchain.ai
-            </a>
-          </p>
-          <p>{site.org} is an independent project and is not affiliated with or endorsed by BOT Chain.</p>
-          <p>
-            &copy; {new Date().getFullYear()} {site.org}. MIT licensed.
-          </p>
-        </div>
+        <p className="border-t border-line py-8 text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} {site.org}. {site.org} is an independent project and is not affiliated with or
+          endorsed by BOT Chain. MIT licensed.
+        </p>
       </div>
     </footer>
   )
